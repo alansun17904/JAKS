@@ -1,5 +1,7 @@
 # Circuit Stability Characterizes Language Model Generalization
 
+![Cover figure for circuit stability.](figures/circuit-stability.png)
+
 This repository is the official implementation of [Circuit Stability Characterizes Language Model Generalization](https://arxiv.org/abs/2505.24731) (ACL 2025). All of the code in the subdirectory `src/eap/` is extensively borrowed from [EAP-IG](https://github.com/hannamw/eap-ig). Some modifications are made to accommodate [Group-Query Attention](https://arxiv.org/abs/2305.13245) in more modern architectures such as Llama 3 and Gemma 2. 
 
 ## Requirements and Dependencies
