@@ -5,8 +5,8 @@ import random
 import argparse
 from functools import partial
 
-from cdatasets import DatasetBuilder, PromptFormatter
-from eap import Graph, attribute, evaluate_baseline, evaluate_graph
+from src.cdatasets import DatasetBuilder, PromptFormatter
+from src.eap import Graph, attribute, evaluate_baseline, evaluate_graph
 from .utils import (
     seed_everything,
     parse_key_value_pairs,

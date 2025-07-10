@@ -1,8 +1,8 @@
 import json
 import argparse
 
-from cdatasets import DatasetBuilder, PromptFormatter
-from eap import Graph, evaluate_graph
+from src.cdatasets import DatasetBuilder, PromptFormatter
+from src.eap import Graph, evaluate_graph
 from .utils import (
     seed_everything,
     parse_key_value_pairs,

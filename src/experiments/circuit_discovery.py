@@ -3,10 +3,11 @@ import sys
 import pickle
 import random
 import argparse
+import torch
 from functools import partial
 
-from cdatasets import DatasetBuilder, PromptFormatter
-from eap import Graph, attribute, evaluate_baseline, evaluate_graph
+from ..cdatasets import DatasetBuilder, PromptFormatter
+from ..eap import Graph, attribute, evaluate_baseline, evaluate_graph
 from .utils import (
     seed_everything,
     parse_key_value_pairs,
@@ -53,21 +54,33 @@ def parse_args():
         help="method for extracting comparison tokens",
     )
     parser.add_argument("--ig_steps", type=int, default=5, help="number of IG steps")
+    parser.add_argument("--device", type=str, default="cuda", help="device to use")
     args = parser.parse_args()
     args.data_params = parse_key_value_pairs(args.data_params)
     args.format_params = parse_key_value_pairs(args.format_params)
     return args
 
 
-if __name__ == "__main__":
+def main():
     opts = parse_args()
     seed_everything(opts.seed)
+    
+    # Print device info
+    device = opts.device
+    print(f"Using device: {device}")
+    if device == "cuda" and torch.cuda.is_available():
+        print(f"GPU: {torch.cuda.get_device_name(0)}")
+        if "3050" in torch.cuda.get_device_name(0) and "Ti" in torch.cuda.get_device_name(0):
+            print("Detected lower VRAM GPU, enabling memory optimizations")
 
     dataset = make_dataset(
         opts.dataset, opts.data_params, opts.format, opts.format_params
     )
-    model = HookedTransformer.from_pretrained(opts.model_name, n_devices=opts.ndevices)
+    model = HookedTransformer.from_pretrained(opts.model_name, device=device)
     dataloader = dataset.to_dataloader(model, opts.batch_size)
+    
+    # Print batch size info
+    print(f"Batch size: {opts.batch_size}")
 
     model.cfg.use_split_qkv_input = True
     model.cfg.use_attn_result = True
@@ -93,3 +106,7 @@ if __name__ == "__main__":
 
     gz = g.to_graphviz()
     gz.draw(f"{opts.ofname}.png", prog="dot")
+
+
+if __name__ == "__main__":
+    main()
