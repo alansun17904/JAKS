@@ -1,12 +1,5 @@
 # JAKS Research Repository
-
-This repository contains research code for circuit stability analysis and future work on problem decomposition. It is organized into two main sections:
-
-## Circuit Stability Research
-
-![Cover figure for circuit stability.](circuit-stability/figures/circuit-stability.png)
-
-The `circuit-stability/` directory contains the official implementation of [Circuit Stability Characterizes Language Model Generalization](https://arxiv.org/abs/2505.24731) (ACL 2025). All of the code in the subdirectory `circuit-stability/code/src/eap/` is extensively borrowed from [EAP-IG](https://github.com/hannamw/eap-ig). Some modifications are made to accommodate [Group-Query Attention](https://arxiv.org/abs/2305.13245) in more modern architectures such as Llama 3 and Gemma 2.
+This repository contains research on circuit stability in neural networks, focusing on problem decomposition and automated plan creation. The work investigates how stable circuit patterns emerge in transformer models and their applications to systematic problem-solving tasks. 
 
 ## Repository Structure
 
@@ -16,27 +9,28 @@ The `circuit-stability/` directory contains the official implementation of [Circ
 │   │   ├── src/                # Source code
 │   │   │   ├── cdatasets/      # Dataset implementations
 │   │   │   ├── eap/           # Edge Attribution Patching
-│   │   │   └── experiments/    # Experiment scripts
+│   │   │   ├── experiments/    # Experiment scripts
+│   │   │   └── scripts/        # Shell scripts for experiments
 │   │   ├── tests/             # Test files
 │   │   └── compare_circuits.py # Circuit comparison tools
-│   ├── experiments/
-│   │   ├── config/            # Environment & setup files
-│   │   └── notebooks/         # Jupyter notebooks
-│   ├── results/
-│   │   ├── outputs/           # JSON/pickle output files
-│   │   └── visualizations/    # Generated plots
-│   └── figures/               # Paper figures
-└── future-work/                # Future problem decomposition research
+│   ├── data/                  # Pickled data files
+│   ├── documentation/         # Documentation files
+│   ├── figures/               # Paper figures and automated outputs
+│   ├── notebooks-source/      # Jupyter notebooks and config
+│   │   └── config/            # Environment & setup files
+│   └── results/               # JSON/pickle output files
+├── test.ipynb                 # Test notebook
+└── v1_circuit.png, v2_circuit.png  # Circuit visualization files
 ``` 
 
 ## Requirements and Dependencies
 
-The circuit stability codebase relies on a `conda` environment whose dependencies are listed in `circuit-stability/experiments/config/environment.yml`. Before installing this environment, you need to install `Graphviz` (required for circuit visualization). To make things easy, you can directly run 
+The circuit stability codebase relies on a `conda` environment whose dependencies are listed in `circuit-stability/notebooks-source/config/environment.yml`. Before installing this environment, you need to install `Graphviz` (required for circuit visualization). To make things easy, you can directly run 
 
 ```bash
 git clone <this-repo>
 cd JAKS
-cd circuit-stability/experiments/config
+cd circuit-stability/notebooks-source/config
 ./install.sh
 conda activate ml
 ```
@@ -59,13 +53,13 @@ Download and install from [https://graphviz.org/download/](https://graphviz.org/
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/cs-codebase.git
-   cd cs-codebase
+   git clone <this-repo>
+   cd JAKS
    ```
 
 2. **Create and activate the conda environment:**
    ```bash
-   conda env create -f circuit-stability/experiments/config/environment.yml
+   conda env create -f circuit-stability/notebooks-source/config/environment.yml
    conda activate ml
    ```
 
@@ -93,7 +87,7 @@ pip install torch==2.4.1
 pip install transformers==4.44.2
 pip install transformer-lens==2.11.0
 pip install pygraphviz==1.14
-pip install -r <(conda env export -f circuit-stability/experiments/config/environment.yml | grep "pip:" -A 1000 | tail -n +2 | sed 's/^      - //')
+pip install -r <(conda env export -f circuit-stability/notebooks-source/config/environment.yml | grep "pip:" -A 1000 | tail -n +2 | sed 's/^      - //')
 ```
 
 ### Computational Requirements
@@ -102,19 +96,6 @@ Case Study I and Case Study II can be run on a single NVIDIA A100 80GB GPU. Howe
 
 
 ## Citation
-
-If you use this code in your research, please cite:
-
-```bibtex
-@inproceedings{
-    sun2025circuit,
-    title={Circuit Stability Characterizes Language Model Generalization},
-    author={Alan Sun},
-    booktitle={The 63rd Annual Meeting of the Association for Computational Linguistics},
-    year={2025},
-    url={https://openreview.net/forum?id=2914j8175g}
-}
-```
 
 ## Acknowledgments
 
