@@ -7,6 +7,10 @@ from tot.prompts.game24 import *
 
 
 def get_current_numbers(y: str) -> str:
+    """
+    removes trailing and leading spaces; splits at each line; takes the last line
+    We prompt it in such a way it has the word '(left: .... )' so we take the numbers between 'left:' and ')'
+    """
     last_line = y.strip().split('\n')[-1]
     return last_line.split('left: ')[-1].split(')')[0]
 
@@ -42,6 +46,14 @@ class Game24Task(Task):
         return self.data[idx]
 
     def test_output(self, idx: int, output: str):
+        """
+        Takes the last line of the output and removes extra text.
+        Gets all numbers from the cleaned-up answer.
+        Gets all numbers from the original problem.
+        Checks if both sets of numbers match.
+        Tries to simplify the expression and checks if it's equal to 24.
+        If it fails, returns 0.
+        """
         expression = output.strip().split('\n')[-1].lower().replace('answer: ', '').split('=')[0]
         numbers = re.findall(r'\d+', expression)
         problem_numbers = re.findall(r'\d+', self.data[idx])
@@ -53,7 +65,8 @@ class Game24Task(Task):
         except Exception as e:
             # print(e)
             return {'r': 0}
-            
+
+    # Wrapper functions to wrap respective prompting techniques and different prompts
     @staticmethod
     def standard_prompt_wrap(x: str, y:str='') -> str:
         return standard_prompt.format(input=x) + y
@@ -81,9 +94,16 @@ class Game24Task(Task):
             return value_last_step_prompt.format(input=x, answer=ans)
         current_numbers = get_current_numbers(y)
         return value_prompt.format(input=current_numbers)
-    
+
+
     @staticmethod
     def value_outputs_unwrap(x: str, y: str, value_outputs: list) -> float:
+        """
+        Checks if the output is too short or missing an answer.
+        Takes the last line from each value output.
+        Gives a score based on the type of answer.
+        Adds up the total score.
+        """
         if len(y.strip().split('\n')) == 4 and 'answer' not in y.lower():
             return 0
         value_names = [_.split('\n')[-1] for _ in value_outputs]

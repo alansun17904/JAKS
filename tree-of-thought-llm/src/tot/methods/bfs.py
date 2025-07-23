@@ -91,6 +91,9 @@ def get_proposals(task, x, y):
     propose_prompt = task.propose_prompt_wrap(x, y)
     # each line is a variation
     proposals = gpt(propose_prompt, n=1, stop=None)[0].split('\n')
+
+    #print(f"To debug: thought variations: {proposals}")
+
     # store each variation in list along with previous variation
     return [y + _ + '\n' for _ in proposals]
 
@@ -132,7 +135,7 @@ def solve(args, task, idx, to_print=True):
     """
     # the main model generation loop; goes to /tot/models.py
     global gpt
-    # just adds these args without actually callin the function
+    # just adds these args without actually calling the function
     gpt = partial(gpt, model=args.backend, temperature=args.temperature)
     print(gpt)
     x = task.get_input(idx)  # gets input at current index

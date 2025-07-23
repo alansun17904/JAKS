@@ -1,7 +1,7 @@
 """
 Parses CLI arguments, sets up logging, and runs the main generation loop via run(args).
 
-devs note: If its your first time please pick an example of game24 and loop through the whole pipeline.
+devs note: If it is your first time please pick an example of game24 and loop through the whole pipeline.
 """
 
 import os

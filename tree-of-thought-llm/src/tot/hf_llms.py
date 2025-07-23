@@ -21,10 +21,13 @@ hf_token = os.getenv("HF_TOKEN")
 
 hf_model = None
 
-def get_hf_model():
+def get_hf_model(model_id):
+    """
+    Lazy initiation of class LLM; making sure its initiated only once.
+    """
     global hf_model
     if hf_model is None:
-        hf_model = LLM()
+        hf_model = LLM(model_id=model_id)
     return hf_model
 
 class LLM():
@@ -48,7 +51,7 @@ class LLM():
         except OSError as e:
             raise RuntimeError(
                 f"Could not download config for {model_id}: {e}"
-                )   
+                )
 
         # Select device
         if torch.backends.mps.is_available():
@@ -87,9 +90,11 @@ class LLM():
             return_tensors="pt"
         ).to(self.device)
 
-    def generate(self, prompt: str,
-                 max_new_tokens : int = 500,
-                 temperature : float = 0.6 ):
+    def generate(self,
+                 prompt: str,
+                 max_tokens : int = 500,
+                 temperature : float = 0.6,
+                  ):
         """
         Generates text from a prompt using the loaded model.
 
@@ -99,16 +104,19 @@ class LLM():
         Returns:
             str: The generated text continuation.
         """
+        print(f"To Debug: prompt before passing into the model: {prompt}")
         # Encode prompt
         inputs = self.encode(prompt)
+
+        if self.device == "mps" and "attention_mask" in inputs:
+            # to makesure the attention masks use dtype int32 bc that is supported by pytorch on mps
+            inputs["attention_mask"] = inputs["attention_mask"].to(dtype=torch.int32)
 
         # Generate continuation
         outputs = self.model.generate(
             **inputs,
-            max_new_tokens= max_new_tokens,
+            max_new_tokens= max_tokens,
             do_sample=True,
-            top_k=50,
-            top_p=0.95,
             temperature= temperature
         )
 
@@ -120,5 +128,5 @@ class LLM():
 
         return generated_text
 
-    
+
 
