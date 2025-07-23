@@ -4,7 +4,9 @@ Provides wrappers for OpenAI's ChatCompletion API with backoff, token/cost track
 
 import os
 import openai
-import backoff 
+import backoff
+
+from .hf_llms import get_hf_model
 
 completion_tokens = prompt_tokens = 0
 
@@ -26,7 +28,7 @@ def completions_with_backoff(**kwargs):
     # just tries to hit API again if error occurs using exponential backoff 
     return openai.ChatCompletion.create(**kwargs)
 
-def gpt(prompt, model="gpt-4", temperature=0.7, max_tokens=1000, n=1, stop=None) -> list:
+def gpt(prompt, model="gpt-2", temperature=0.7, max_tokens=1000, n=1, stop=None) -> list:
     """
     Generate completions from a prompt using OpenAI's chat models.
     Args:
@@ -39,6 +41,15 @@ def gpt(prompt, model="gpt-4", temperature=0.7, max_tokens=1000, n=1, stop=None)
     Returns:
         list: List of generated completions (strings).
     """
+    # Check if model is gpt-2
+    if model.lower() in ["gpt-2","gpt2"]:
+        # Lazy import so that it only initiates once
+        hf = get_hf_model()
+        # generate variations using hf_models
+        raw_output_text = hf.generate(prompt)
+        print(f"To Debug: Encoded tensors {raw_output_text}")
+        return raw_output_text
+    
     messages = [{"role": "user", "content": prompt}]
     return chatgpt(messages, model=model, temperature=temperature, max_tokens=max_tokens, n=n, stop=stop)
     

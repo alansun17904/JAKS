@@ -7,7 +7,6 @@ devs note: If its your first time please pick an example of game24 and loop thro
 import os
 import json
 import argparse
-
 from tot.tasks import get_task
 from tot.methods.bfs import solve, naive_solve
 from tot.models import gpt_usage
@@ -70,7 +69,7 @@ def parse_args():
         argparse.Namespace : all the CLI args passed 
     """
     args = argparse.ArgumentParser()
-    args.add_argument('--backend', type=str, choices=['gpt-4', 'gpt-3.5-turbo', 'gpt-4o'], default='gpt-4')
+    args.add_argument('--backend', type=str, choices=['gpt-2', 'gpt-4', 'gpt-3.5-turbo', 'gpt-4o'], default='gpt-2')
     args.add_argument('--temperature', type=float, default=0.7)
 
     args.add_argument('--task', type=str, required=True, choices=['game24', 'text', 'crosswords'])

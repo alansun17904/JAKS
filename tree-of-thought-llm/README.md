@@ -20,31 +20,34 @@
 Official implementation for paper [Tree of Thoughts: Deliberate Problem Solving with Large Language Models](https://arxiv.org/abs/2305.10601) with code, prompts, model outputs.
 Also check [its tweet thread](https://twitter.com/ShunyuYao12/status/1659357547474681857) in 1min.
 
-
-
-
-
 ## Setup
 1. Set up OpenAI API key and store in environment variable ``OPENAI_API_KEY`` (see [here](https://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety)). 
 
-2. Install `tot` package in two ways:
-- Option 1: Install from PyPI
-```bash
-pip install tree-of-thoughts-llm
-```
-- Option 2: Install from source
+2. Install `tot` package in this way:
+
+- Install from source
+
 ```bash
 git clone https://github.com/princeton-nlp/tree-of-thought-llm
 cd tree-of-thought-llm
-pip install -r requirements.txt
+# for mac use 
+pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/nightly/cpu
+# for others
+pip install -r requirements.txt 
+
 pip install -e .  # install `tot` package
 ```
+
+**After setting up the tree of thoughts library**
+1. Create an `.env` file inside the `JAKS` folder 
+2. Create an `HF_TOKEN` variable and add your huggingface access token
+
 ## File Structure
 
 ```{bash}
 ## File Structure
 
-⁠ ```{bash}
+```{bash}
 ├── LICENSE
 ├── logs
 │   ├── crosswords   # contains the logs files
@@ -56,9 +59,9 @@ pip install -e .  # install `tot` package
 │   └── teaser.png
 ├── pyproject.toml
 ├── README.md
-├── requirements.txt
-├── run.py                      # contains the main logic
-├── scripts                     
+├── requirements.txt            
+├── run.py                      # contains the main entry point 
+├── scripts                     # Has bash scripts to run each task 
 │   ├── crosswords  
 │   │   ├── cot_sampling.sh
 │   │   ├── search_crosswords-dfs.ipynb
@@ -75,7 +78,7 @@ pip install -e .  # install `tot` package
 └── src
     └── tot
         ├── __init__.py
-        ├── data
+        ├── data                 # Dataset in .csv .json .txt format for each task
         │   ├── 24
         │   │   └── 24.csv
         │   ├── crosswords
@@ -83,14 +86,14 @@ pip install -e .  # install `tot` package
         │   │   └── mini0505.json
         │   └── text
         │       └── data_100_random_text.txt
-        ├── methods
+        ├── methods              # Implements the BFS algorithm
         │   └── bfs.py
-        ├── models.py
-        ├── prompts
+        ├── models.py            # Has the function that calls the actual completion
+        ├── prompts              # Has prompts as 'str' for each tasks
         │   ├── crosswords.py
         │   ├── game24.py
         │   └── text.py
-        └── tasks
+        └── tasks                # Has the class definition of each task (task dependent methods)
             ├── __init__.py
             ├── base.py
             ├── crosswords.py
@@ -98,10 +101,76 @@ pip install -e .  # install `tot` package
             └── text.py
 
 ```
+```bash
 
-
-
-
+├── LICENSE
+├── MANIFEST.in
+├── README.md
+├── logs
+│     ├── crosswords                            # contains the logs files 
+│     │        ├── env_cache.json
+│     │        ├── env_prompt_status_cache.json
+│     │        ├── gpt-4_0.7_naive_cot_sample_10_start0_end20.json
+│     │        ├── gpt-4_0.7_naive_standard_sample_10_start0_end20.json
+│     │        ├── infoss_dfs_no_prune.json
+│     │        └── infoss_dfs_prune.json
+│     ├── game24
+│     │     ├── gpt-4_0.7_naive_cot_sample_100_start900_end1000.json
+│     │     ├── gpt-4_0.7_naive_standard_sample_100_start900_end1000.json
+│     │     └── gpt-4_0.7_propose1_value3_greedy5_start900_end1000.json
+│     └── text
+│           ├── gpt-4_1.0_generate_sample_select_greedy_sample5_start0_end100.json
+│           ├── gpt-4_1.0_naive_cot_sample_10_start0_end100.json
+│           └── gpt-4_1.0_naive_standard_sample_10_start0_end100.json
+├── pyproject.toml
+├── requirements.txt
+├── run.py                                         # contains the main entry point      
+├── scripts                                        # Has bash scripts to run each task  
+│     ├── crosswords
+│     │      ├── cot_sampling.sh
+│     │      ├── search_crosswords-dfs.ipynb
+│     │      └── standard_sampling.sh
+│     ├── game24
+│     │      ├── bfs.sh
+│     │      ├── cot_sampling.sh
+│     │      └── standard_sampling.sh
+│     └── text
+│          ├── bfs.sh
+│          ├── cot_sampling.sh
+│          └── standard_sampling.sh
+├── setup.py
+└── src
+    ├── tot
+    │    ├── __init__.py
+    │    ├── data                                    # Dataset in .csv .json .txt format for each task
+    │    │     ├── 24
+    │    │     │    └── 24.csv
+    │    │     ├── crosswords
+    │    │     │       ├── mini0505.json
+    │    │     │       └── mini0505_0_100_5.json
+    │    │     └── text
+    │    │          └── data_100_random_text.txt
+    │    ├── hf_llms.py                             # All huggingface related inference methods
+    │    ├── methods
+    │    │     └── bfs.py                                # Implements the BFS algorithm        
+    │    ├── models.py                                   # Has the function that calls completion                                                      
+    │    ├── prompts                                     # Has prompts as 'str' for each tasks  
+    │    │      ├── crosswords.py                        
+    │    │      ├── game24.py
+    │    │      └── text.py
+    │    └── tasks                                      # Has the class definition of each task (task dependent methods)
+    │        ├── __init__.py
+    │        ├── base.py
+    │        ├── crosswords.py
+    │        ├── game24.py
+    │        └── text.py
+    └── tree_of_thoughts_llm.egg-info
+        ├── PKG-INFO
+        ├── SOURCES.txt
+        ├── dependency_links.txt
+        ├── requires.txt
+        └── top_level.txt
+```
 
 ## Quick Start
 The following minimal script will attempt to solve the game of 24 with `4 5 6 10` (might be a bit slow as it's using GPT-4):
