@@ -13,7 +13,7 @@ python run.py \
       --backend gpt-2 \
       --task game24  \
       --method_generate propose \
-      --method_evaluate vote \
+      --method_evaluate value \
       --task_start_index 1 \
       --task_end_index 2 \
        "${@}"

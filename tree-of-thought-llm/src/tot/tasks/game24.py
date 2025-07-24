@@ -43,6 +43,7 @@ class Game24Task(Task):
         return len(self.data)
     
     def get_input(self, idx: int) -> str:
+        print(f"To Debug: Current entry: {self.data[idx]}")
         return self.data[idx]
 
     def test_output(self, idx: int, output: str):
