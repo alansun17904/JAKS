@@ -1,31 +1,8 @@
-# Official Repo of Tree of Thoughts (ToT)
-
-<p>
-    <a href="https://badge.fury.io/py/tree-of-thoughts-llm">
-        <img src="https://badge.fury.io/py/tree-of-thoughts-llm.svg">
-    </a>
-    <a href="https://www.python.org/">
-        <img alt="Build" src="https://img.shields.io/badge/Python-3.7+-1f425f.svg?color=purple">
-    </a>
-    <a href="https://copyright.princeton.edu/policy">
-        <img alt="License" src="https://img.shields.io/badge/License-MIT-blue">
-    </a>
-    <a href="https://zenodo.org/badge/latestdoi/642099326">
-        <img src="https://zenodo.org/badge/642099326.svg">
-    </a>
-</p>
-
-![teaser](pics/teaser.png)
-
-Official implementation for paper [Tree of Thoughts: Deliberate Problem Solving with Large Language Models](https://arxiv.org/abs/2305.10601) with code, prompts, model outputs.
-Also check [its tweet thread](https://twitter.com/ShunyuYao12/status/1659357547474681857) in 1min.
+# Tree of Thoughts (ToT) for thought generation
 
 ## Setup
-1. Set up OpenAI API key and store in environment variable ``OPENAI_API_KEY`` (see [here](https://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety)). 
-
-2. Install `tot` package in this way:
-
-- Install from source
+1. Get hugginface access token
+2. Follow below command to get `tot` package:
 
 ```bash
 git clone https://github.com/princeton-nlp/tree-of-thought-llm
@@ -38,25 +15,17 @@ pip install -r requirements.txt
 pip install -e .  # install `tot` package
 ```
 
-**After setting up the tree of thoughts library**
+**After setting up the tot package**
 1. Create an `.env` file inside the `JAKS` folder 
 2. Create an `HF_TOKEN` variable and add your huggingface access token
 
 ## File Structure
 
-```{bash}
+```bash
 ## File Structure
 
 ```{bash}
-├── LICENSE
-├── logs
-│   ├── crosswords   # contains the logs files
-│   ├── game24
-│   └── text
 ├── MANIFEST.in
-├── pics
-│   ├── fake.png
-│   └── teaser.png
 ├── pyproject.toml
 ├── README.md
 ├── requirements.txt            
@@ -64,7 +33,7 @@ pip install -e .  # install `tot` package
 ├── scripts                     # Has bash scripts to run each task 
 │   ├── crosswords  
 │   │   ├── cot_sampling.sh
-│   │   ├── search_crosswords-dfs.ipynb
+│   │   ├── search_crosswords-dfs.ipynb    # Has depth first search
 │   │   └── standard_sampling.sh
 │   ├── game24
 │   │   ├── bfs.sh
@@ -101,98 +70,27 @@ pip install -e .  # install `tot` package
             └── text.py
 
 ```
-```bash
 
-├── LICENSE
-├── MANIFEST.in
-├── README.md
-├── logs
-│     ├── crosswords                            # contains the logs files 
-│     │        ├── env_cache.json
-│     │        ├── env_prompt_status_cache.json
-│     │        ├── gpt-4_0.7_naive_cot_sample_10_start0_end20.json
-│     │        ├── gpt-4_0.7_naive_standard_sample_10_start0_end20.json
-│     │        ├── infoss_dfs_no_prune.json
-│     │        └── infoss_dfs_prune.json
-│     ├── game24
-│     │     ├── gpt-4_0.7_naive_cot_sample_100_start900_end1000.json
-│     │     ├── gpt-4_0.7_naive_standard_sample_100_start900_end1000.json
-│     │     └── gpt-4_0.7_propose1_value3_greedy5_start900_end1000.json
-│     └── text
-│           ├── gpt-4_1.0_generate_sample_select_greedy_sample5_start0_end100.json
-│           ├── gpt-4_1.0_naive_cot_sample_10_start0_end100.json
-│           └── gpt-4_1.0_naive_standard_sample_10_start0_end100.json
-├── pyproject.toml
-├── requirements.txt
-├── run.py                                         # contains the main entry point      
-├── scripts                                        # Has bash scripts to run each task  
-│     ├── crosswords
-│     │      ├── cot_sampling.sh
-│     │      ├── search_crosswords-dfs.ipynb
-│     │      └── standard_sampling.sh
-│     ├── game24
-│     │      ├── bfs.sh
-│     │      ├── cot_sampling.sh
-│     │      └── standard_sampling.sh
-│     └── text
-│          ├── bfs.sh
-│          ├── cot_sampling.sh
-│          └── standard_sampling.sh
-├── setup.py
-└── src
-    ├── tot
-    │    ├── __init__.py
-    │    ├── data                                    # Dataset in .csv .json .txt format for each task
-    │    │     ├── 24
-    │    │     │    └── 24.csv
-    │    │     ├── crosswords
-    │    │     │       ├── mini0505.json
-    │    │     │       └── mini0505_0_100_5.json
-    │    │     └── text
-    │    │          └── data_100_random_text.txt
-    │    ├── hf_llms.py                             # All huggingface related inference methods
-    │    ├── methods
-    │    │     └── bfs.py                                # Implements the BFS algorithm        
-    │    ├── models.py                                   # Has the function that calls completion                                                      
-    │    ├── prompts                                     # Has prompts as 'str' for each tasks  
-    │    │      ├── crosswords.py                        
-    │    │      ├── game24.py
-    │    │      └── text.py
-    │    └── tasks                                      # Has the class definition of each task (task dependent methods)
-    │        ├── __init__.py
-    │        ├── base.py
-    │        ├── crosswords.py
-    │        ├── game24.py
-    │        └── text.py
-    └── tree_of_thoughts_llm.egg-info
-        ├── PKG-INFO
-        ├── SOURCES.txt
-        ├── dependency_links.txt
-        ├── requires.txt
-        └── top_level.txt
-```
+## Quick Start To Run Locally For One Inference
 
-## Quick Start
-The following minimal script will attempt to solve the game of 24 with `4 5 6 10` (might be a bit slow as it's using GPT-4):
-```python
-import argparse
-from tot.methods.bfs import solve
-from tot.tasks.game24 import Game24Task
+run `JAKS/tree-of-thought-llm/scripts/game24/bfs.sh`
 
-args = argparse.Namespace(backend='gpt-4', temperature=0.7, task='game24', naive_run=False, prompt_sample=None, method_generate='propose', method_evaluate='value', method_select='greedy', n_generate_sample=1, n_evaluate_sample=3, n_select_sample=5)
+**_OPTIONAL:_** The above script just runs for the first index entry in the dataset of game24. Could be changed according to your will. 
 
-task = Game24Task()
-ys, infos = solve(args, task, 900)
-print(ys[0])
-```
-
-And the output would be something like (note it's not deterministic, and sometimes the output can be wrong):
-```
-10 - 4 = 6 (left: 5 6 6)
-5 * 6 = 30 (left: 6 30)
-30 - 6 = 24 (left: 24)
-Answer: (5 * (10 - 4)) - 6 = 24
-```
+## flow of code 
+1. You run the respective script from the package.
+2. Calls the run.py 
+    2.1 Run.py has two main components:
+    2.2 Calls get_task() -> respective instance of a task class which has all required processing functions
+    2.3 Loops from `start_idx` to `stop_idx` and calls `naive_solve` or `solve`; based on input args
+3. If `solve` (TOT + BFS) function is called in a loop w.r.t each tasks number of steps (eg: game24 is 4):
+    3.1 If `--method_generate` is propose
+         3.1.1 Calls `get_proposals` -> wraps the input with `propose_prompt` and calls gpt for inference
+         3.1.2 Gpt calls hf_generate method from LLM class in a loop of `--n_generate_sample` to generate output texts; 
+4. Depending on the `--method_evaluate` we call `get_votes` or `get_values` respectively:
+    4.1 This has respective prompt wrap to vote each thought variations respectively
+5. We then select thought variations based on `sample`(random sampling) or `greedy`
+   5.1 Based on this we return the selected new `ys` (i believe it's the plural form of y )
 
 ## Paper Experiments
 
@@ -208,10 +106,6 @@ The very simple ``run.py`` implements the ToT + BFS algorithm, as well as the na
 - ``--n_evaluate_sample``: number of times to prompt for state evaluation
 - ``--n_select_sample``: number of states to keep from each step (i.e. ``b`` in the paper's ToT + BFS algorithm)
 
-
-
-## Paper Trajectories
-``logs/`` contains all the trajectories from the paper's experiments, except for ``logs/game24/gpt-4_0.7_propose1_value3_greedy5_start900_end1000.json`` which was reproduced after the paper (as the original experiment was done in a notebook) and achieved a 69\% score instead of the original 74\% score due to randomness in GPT decoding. We hope to aggregate multiple runs in the future to account for sampling randomness and update the paper, but this shouldn't affect the main conclusions of the paper.
 
 ## How to Add A New Task
 Setting up a new task is easy, and mainly involves two steps.

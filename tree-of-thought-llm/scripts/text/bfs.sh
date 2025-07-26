@@ -1,7 +1,7 @@
 python run.py \
     --task text \
     --task_start_index 0 \
-    --task_end_index 100 \
+    --task_end_index 1 \
     --method_generate sample \
     --method_evaluate vote \
     --method_select greedy \
@@ -10,7 +10,7 @@ python run.py \
     --n_select_sample 1 \
     --prompt_sample cot \
     --temperature 1.0 \
-    ${@}
+    "${@}"
 
 
 # 0.3 dollars per line ->  30 dollars for 100 lines
