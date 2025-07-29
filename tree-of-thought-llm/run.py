@@ -4,8 +4,6 @@ Parses CLI arguments, sets up logging, and runs the main generation loop via run
 devs note: If it is your first time please pick an example of game24 and loop through the whole pipeline.
 """
 
-import os
-import json
 import argparse
 from tot.tasks import get_task
 from tot.methods.bfs import solve, naive_solve
@@ -24,7 +22,7 @@ def run(args):
     """
     # fetches respective task attributes from /tot/tasks/{task_name}.py
     task = get_task(args.task) # task is a instance of the respective task class
-    logs, cnt_avg, cnt_any = [], 0, 0
+    #logs, cnt_avg, cnt_any = [], 0, 0
 
     #if args.naive_run:
     #    file = f'./logs/{args.task}/{args.backend}_{args.temperature}_naive_{args.prompt_sample}_sample_{args.n_generate_sample}_start{args.task_start_index}_end{args.task_end_index}.json'
