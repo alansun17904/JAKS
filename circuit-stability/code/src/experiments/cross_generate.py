@@ -1,8 +1,8 @@
 import json
 import argparse
 
-from src.cdatasets import DatasetBuilder, PromptFormatter
-from src.eap import Graph, evaluate_graph, evaluate_graph_generate
+from ..cdatasets import DatasetBuilder, PromptFormatter
+from ..eap import Graph, evaluate_graph, evaluate_graph_generate
 from .utils import (
     seed_everything,
     parse_key_value_pairs,
@@ -25,8 +25,8 @@ from torch.utils.data import DataLoader
 from transformer_lens import HookedTransformer
 from einops import einsum
 
-from eap.graph import Graph, InputNode, LogitNode, AttentionNode, MLPNode, Node, Edge
-from eap.attribute import make_hooks_and_matrices, tokenize_plus
+from ..eap.graph import Graph, InputNode, LogitNode, AttentionNode, MLPNode, Node, Edge
+from ..eap.attribute import make_hooks_and_matrices, tokenize_plus
 
 
 def parse_args():

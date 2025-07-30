@@ -5,8 +5,8 @@ import random
 import argparse
 from functools import partial
 
-from src.cdatasets import DatasetBuilder, PromptFormatter
-from src.eap import Graph, attribute, evaluate_baseline, evaluate_graph
+from ..cdatasets import DatasetBuilder, PromptFormatter
+from ..eap import Graph, attribute, evaluate_baseline, evaluate_graph
 from .utils import (
     seed_everything,
     parse_key_value_pairs,
@@ -16,7 +16,7 @@ from .utils import (
     extraction_schema,
     kl_all_pos,
 )
-from src.cdatasets import PromptDataset
+from ..cdatasets import PromptDataset
 
 import torch
 import torch.nn.functional as F

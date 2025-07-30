@@ -5,7 +5,7 @@ import torch
 import numpy as np
 from functools import wraps
 
-from src.cdatasets import DatasetBuilder, PromptFormatter
+from ..cdatasets import DatasetBuilder, PromptFormatter
 
 import torch.nn.functional as F
 from transformer_lens import HookedTransformer

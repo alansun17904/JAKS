@@ -512,10 +512,11 @@ def main():
     
     # Get the directory where this script is located
     script_dir = os.path.dirname(os.path.abspath(__file__))
+    results_dir = os.path.join(script_dir, '..', 'results', 'outputs')
     
     # File paths - use absolute paths
-    file1_path = os.path.join(script_dir, 'output.pkl.json')
-    file2_path = os.path.join(script_dir, 'output_paren.json')
+    file1_path = os.path.join(results_dir, 'output.pkl.json')
+    file2_path = os.path.join(results_dir, 'output_paren.json')
 
     print(f"Comparing circuits from:\n1: {file1_path}\n2: {file2_path}\n")
     
