@@ -3,9 +3,10 @@
 This script contains the LLM class, which loads and uses
 a Hugging Face Causal Language Model for text generation.
 """
-#from huggingface_hub import login, whoami
+
 from dotenv import load_dotenv
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
+
 import torch
 import os
 
@@ -13,11 +14,6 @@ import os
 load_dotenv(dotenv_path="../.env")
 
 hf_token = os.getenv("HF_TOKEN")
-
-#login(hf_token)
-
-#info = whoami()
-#print("To check if successful:", info["name"])
 
 hf_model = None
 
@@ -27,10 +23,10 @@ def get_hf_model(model_id):
     """
     global hf_model
     if hf_model is None:
-        hf_model = LLM(model_id=model_id)
+        hf_model = hf_LLM(model_id=model_id)
     return hf_model
 
-class LLM():
+class hf_LLM():
     def __init__(self, model_id = 'openai-community/gpt2', args = None,):
         """
         A wrapper class to load a Causal Language Model and tokenizer,
@@ -45,7 +41,7 @@ class LLM():
         if model_id.lower() in ['gpt-2', 'gpt2']:
             model_id = "openai-community/gpt2"
 
-        # Get config file first just to test for network errors or anything else
+        #Get config file first just to test for network errors or anything else
         try:
             config = AutoConfig.from_pretrained(model_id)
         except OSError as e:
@@ -74,6 +70,7 @@ class LLM():
 
         # Store any additional arguments
         self.args = args
+
 
     def encode(self, prompt: str):
         """

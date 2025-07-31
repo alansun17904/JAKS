@@ -6,7 +6,7 @@ import os
 import openai
 import backoff
 
-from .hf_llms import get_hf_model
+from .t_lens_generate import get_tlens_model
 
 completion_tokens = prompt_tokens = 0
 
@@ -45,10 +45,10 @@ def gpt(prompt, model="gpt-2", temperature=0.7, max_tokens=500, n=1, stop=None) 
     if model.lower() not in ['gpt-3.5-turbo', 'gpt-4o']:
         outputs = []
         # Lazy import so that it only initiates once
-        hf = get_hf_model(model_id = model)
+        t_lens = get_tlens_model(model_id = model)
         # generate variations using hf_models
         while n > 0: # n is the number of generations we want, each generation has x variations
-            raw_output_text = hf.generate(prompt,  # TODO maybe make the prompt look like messages below
+            raw_output_text = t_lens.generate(prompt,  # TODO maybe make the prompt look like messages below
                                           temperature=temperature,
                                           max_tokens=max_tokens,
                                           )
@@ -92,19 +92,3 @@ def chatgpt(messages, model="gpt-4", temperature=0.7, max_tokens=1000, n=1, stop
         completion_tokens += res["usage"]["completion_tokens"]
         prompt_tokens += res["usage"]["prompt_tokens"]
     return outputs
-    
-def gpt_usage(backend="gpt-4"):
-    """
-    Returns the total token usage and estimated cost for the current session.
-    TODO we dont need this for our pipeline
-    Args:
-        backend (str): Model backend name ('gpt-4' or 'gpt-3.5-turbo').
-    Returns:
-        dict: {"completion_tokens": int, "prompt_tokens": int, "cost": float}
-    """
-    global completion_tokens, prompt_tokens
-    if backend == "gpt-4":
-        cost = completion_tokens / 1000 * 0.06 + prompt_tokens / 1000 * 0.03
-    elif backend == "gpt-3.5-turbo":
-        cost = (completion_tokens + prompt_tokens) / 1000 * 0.0002
-    return {"completion_tokens": completion_tokens, "prompt_tokens": prompt_tokens, "cost": cost}

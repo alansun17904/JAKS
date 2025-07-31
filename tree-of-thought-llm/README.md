@@ -1,7 +1,12 @@
 # Tree of Thoughts (ToT) for thought generation
 
+# Technical Constraints for thought generation:
+1. GPT-2 has a max input token length of **_1024_**; does limit generation for the task 'text'.
+2.
+
+
 ## Setup
-1. Get hugginface access token
+1. Get hugginface access token here: https://huggingface.co/settings/tokens (for gated models)
 2. Follow below command to get `tot` package:
 
 ```bash
@@ -58,6 +63,8 @@ pip install -e .  # install `tot` package
         ├── methods              # Implements the BFS algorithm
         │   └── bfs.py
         ├── models.py            # Has the function that calls the actual completion
+        ├── hf_llm.py            # Has hugging face class (just in case)
+        ├── t_lens_generate.py   # has inference generation through transformer lens
         ├── prompts              # Has prompts as 'str' for each tasks
         │   ├── crosswords.py
         │   ├── game24.py
@@ -90,7 +97,7 @@ run `JAKS/tree-of-thought-llm/scripts/game24/bfs.sh`
 4. Depending on the `--method_evaluate` we call `get_votes` or `get_values` respectively:
     4.1 This has respective prompt wrap to vote each thought variations respectively
 5. We then select thought variations based on `sample`(random sampling) or `greedy`
-   5.1 Based on this we return the selected new `ys` (i believe it's the plural form of y )
+   5.1 Based on this we return the selected new `ys` (I believe it's the plural form of y )
 
 ## Paper Experiments
 
