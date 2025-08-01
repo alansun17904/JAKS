@@ -28,7 +28,7 @@ def completions_with_backoff(**kwargs):
     # just tries to hit API again if error occurs using exponential backoff 
     return openai.ChatCompletion.create(**kwargs)
 
-def gpt(prompt, model="gpt-2", temperature=0.7, max_tokens=500, n=1, stop=None) -> list:
+def gpt(prompt, model="gpt2", temperature=0.7, max_tokens=500, n=2, stop=None) -> list:
     """
     Generate completions from a prompt using OpenAI's chat models.
     Args:
@@ -53,9 +53,10 @@ def gpt(prompt, model="gpt-2", temperature=0.7, max_tokens=500, n=1, stop=None) 
                                           max_tokens=max_tokens,
                                           )
             n -= 1
-            outputs.append(raw_output_text)
+            print(raw_output_text)
+            outputs.append(raw_output_text.strip().split("Input:")[-1])
 
-        print("To Debug: Encoded tensors:\n" + "\n".join(str(_) for _ in outputs))
+        print("To Debug: Step i with m variations for the input Y:\n\n" + "\n".join(str(_) for _ in outputs))
         return outputs
     
     messages = [{"role": "user", "content": prompt}]

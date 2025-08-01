@@ -37,6 +37,7 @@ class LLM():
             args (list): Optional list of arguments for future use.
         """
 
+
         self.args = args
 
         # Select device
@@ -47,6 +48,7 @@ class LLM():
         #    self.device = "cuda"
         #else:
         #    self.device = "cpu"
+
 
         self.model = HookedTransformer.from_pretrained(model_id)
 
