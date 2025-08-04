@@ -1,0 +1,198 @@
+"""
+Implements value-based, vote-based, and proposal-based search.
+"""
+
+import itertools
+import numpy as np
+from functools import partial
+from tot.models import gpt
+
+def get_value(task, x, y, n_evaluate_sample, cache_value=True):
+    """
+    To ask the llm how well the current step is on the scale of (sure/maybe/impossible)
+    
+    Args:
+        task: The task object providing prompt and cache utilities.
+        x: The input string.
+        y: The candidate output string.
+        n_evaluate_sample: number of times to ask the llm
+        cache_value: Whether to cache the value result.
+    Returns:
+        float: The value score for the candidate output.
+    """
+
+    # goes to /tot/tasks/{task}.py to get the respective tasks's wrap methods
+    value_prompt = task.value_prompt_wrap(x, y) # eg: Evaluate if given numbers can reach 24 (sure/likely/impossible)
+    # if cached value is available then use cached
+    if cache_value and value_prompt in task.value_cache:
+        return task.value_cache[value_prompt]
+    # Send to gpt to run the inference loop
+    value_outputs = gpt(value_prompt, n=n_evaluate_sample, stop=None)
+    # goes to /tot/tasks/{task}.py to get the respective tasks's unwrap methods
+    value = task.value_outputs_unwrap(x, y, value_outputs)
+    if cache_value:
+        task.value_cache[value_prompt] = value
+    return value
+
+def get_values(task, x, ys, n_evaluate_sample, cache_value=True):
+    """
+    Actual function that calls the inference loop i.e get_values() for each variation 
+
+    Args:
+        task: The task object.
+        x: The input string.
+        ys: List of step ith variations.
+        n_evaluate_sample: number of times to ask the llm
+        cache_value: Whether to cache value results.
+    Returns:
+        list: Value scores for each candidate output.
+    """
+    values = []
+    local_value_cache = {}
+    for y in ys:  # each partial output
+        if y in local_value_cache:  # avoid duplicate candidates
+            value = 0
+        else:    
+            value = get_value(task, x, y, n_evaluate_sample, cache_value=cache_value)
+            local_value_cache[y] = value
+        values.append(value)
+    return values
+
+def get_votes(task, x, ys, n_evaluate_sample):
+    """
+    Use LLM to decide which is the most promising step given instructions and list of steps
+
+    Args:
+        task: The task object.
+        x: The input string.
+        ys: List of step ith variations.
+        n_evaluate_sample: number of times to ask the llm
+    Returns:
+        list: Vote-based value scores for each candidate output.
+    """
+    # vote_prompt_wrap is only present in task: /tot/tasks/text.py
+    vote_prompt = task.vote_prompt_wrap(x, ys)
+    vote_outputs = gpt(vote_prompt, n=n_evaluate_sample, stop=None)
+    values = task.vote_outputs_unwrap(vote_outputs, len(ys))
+    return values
+
+def get_proposals(task, x, y): 
+    """
+    Ask LLM to propose a set of first steps based on few-shot prompting.
+
+    Args:
+        task: The task object.
+        x: The input string.
+        y: The current output string (partial solution).
+    Returns:
+        list: New candidate outputs (proposals) as continuations of y.
+    """
+    # In /tot/tasks/{task}.py gets the respective method 
+    propose_prompt = task.propose_prompt_wrap(x, y)
+    # each line is a variation
+    proposals = gpt(propose_prompt, n=1, stop=None)[0].split('\n')
+    # store each variation in list along with previous variation
+    return [y + _ + '\n' for _ in proposals]
+
+def get_samples(task, x, y, n_generate_sample, prompt_sample, stop):
+    """
+    Ask llm to directly answer the question using a standard prompt
+
+    Args:
+        task: The task object.
+        x: The input string.
+        y: The current output string (partial solution).
+        n_generate_sample: Number of samples to generate.
+        prompt_sample: Type of prompt ('standard' or 'cot').
+        stop: Stop token(s) for LLM generation.
+    Returns:
+        list: New candidate outputs as continuations of y.
+    """
+    if prompt_sample == 'standard':
+        prompt = task.standard_prompt_wrap(x, y)
+    elif prompt_sample == 'cot':
+        prompt = task.cot_prompt_wrap(x, y)
+    else:
+        raise ValueError(f'prompt_sample {prompt_sample} not recognized')
+    samples = gpt(prompt, n=n_generate_sample, stop=stop)
+    return [y + _ for _ in samples]
+
+def solve(args, task, idx, to_print=True):
+    """
+    Main BFS search loop for generating and selecting candidate solutions step by step.
+    At each step, generates, evaluates, and selects candidates according to the specified methods.
+
+    Args:
+        args: all the CLI args.
+        task: The task object.
+        idx: Index of the input to solve.
+        to_print: Whether to print intermediate results.
+    Returns:
+        tuple: (final candidate outputs, log info dictionary)
+    """
+    # the main model generation loop; goes to /tot/models.py
+    global gpt
+    # just adds these args without actually callin the function
+    gpt = partial(gpt, model=args.backend, temperature=args.temperature)
+    print(gpt)
+    x = task.get_input(idx)  # gets input at current index
+    ys = ['']  # current output candidates / thought variations
+    infos = []
+    for step in range(task.steps): # each class instance has an attribute steps allowed to complete given task
+        # generation
+        if args.method_generate == 'sample':
+            new_ys = [get_samples(task, x, y, args.n_generate_sample, prompt_sample=args.prompt_sample, stop=task.stops[step]) for y in ys]
+        # Ask model to propose variations of first step /tot/prompts/{task}.py propose_prompt
+        elif args.method_generate == 'propose':
+            new_ys = [get_proposals(task, x, y) for y in ys]
+
+        # the list of list for concurrent step's variation generation is a list of list
+        new_ys = list(itertools.chain(*new_ys)) # this flattens it into a single list
+        ids = list(range(len(new_ys)))
+
+        # evaluation method
+        if args.method_evaluate == 'vote':
+            values = get_votes(task, x, new_ys, args.n_evaluate_sample)
+        elif args.method_evaluate == 'value':
+            values = get_values(task, x, new_ys, args.n_evaluate_sample)
+
+        # selection
+        if args.method_select == 'sample':
+            ps = np.array(values) / sum(values)
+            select_ids = np.random.choice(ids, size=args.n_select_sample, p=ps).tolist()
+
+        elif args.method_select == 'greedy':
+            # sorted based on values
+            select_ids = sorted(ids, key=lambda x: values[x], reverse=True)[:args.n_select_sample]
+        select_new_ys = [new_ys[select_id] for select_id in select_ids]
+
+        # log
+        if to_print: 
+            sorted_new_ys, sorted_values = zip(*sorted(zip(new_ys, values), key=lambda x: x[1], reverse=True))
+            print(f'-- new_ys --: {sorted_new_ys}\n-- sol values --: {sorted_values}\n-- choices --: {select_new_ys}\n')
+        
+        infos.append({'step': step, 'x': x, 'ys': ys, 'new_ys': new_ys, 'values': values, 'select_new_ys': select_new_ys})
+        ys = select_new_ys
+    
+    if to_print: 
+        print(ys)
+    return ys, {'steps': infos}
+
+def naive_solve(args, task, idx, to_print=True):
+    """
+    Simpler baseline: generate samples in one shot without iterative search or evaluation.
+
+    Args:
+        args: Namespace of arguments controlling the search.
+        task: The task object.
+        idx: Index of the input to solve.
+        to_print: Whether to print intermediate results.
+    Returns:
+        tuple: (final candidate outputs, empty log dictionary)
+    """
+    global gpt
+    gpt = partial(gpt, model=args.backend, temperature=args.temperature)
+    print(gpt)
+    x = task.get_input(idx)  # input
+    ys = get_samples(task, x, '', args.n_generate_sample, args.prompt_sample, stop=None)
+    return ys, {}
