@@ -10,10 +10,20 @@
 #    ${@}
 
 python run.py \
-      --backend gpt-2 \
+      --backend gpt2 \
       --task game24  \
       --method_generate propose \
       --method_evaluate value \
       --task_start_index 1 \
       --task_end_index 2 \
        "${@}"
+
+#python run.py \
+#      --backend meta-llama/llama-3.2-3B-Instruct\
+#      --task game24  \
+#      --method_generate propose \
+#      --method_evaluate value \
+#      --task_start_index 1 \
+#      --task_end_index 2 \
+#       "${@}"
+

@@ -6,7 +6,7 @@
 
 
 ## Setup
-1. Get hugginface access token here: https://huggingface.co/settings/tokens (for gated models)
+1. Get hugginface access token here: https://huggingface.co/settings/tokens (for gated models) (https://transformerlensorg.github.io/TransformerLens/content/getting_started.html)
 2. Follow below command to get `tot` package:
 
 ```bash

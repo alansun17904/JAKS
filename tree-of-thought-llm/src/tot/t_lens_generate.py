@@ -50,21 +50,27 @@ class LLM():
         #    self.device = "cpu"
 
 
-        self.model = HookedTransformer.from_pretrained(model_id)
+        from dotenv import load_dotenv
+        load_dotenv("../../../.env")
+        self.model = HookedTransformer.from_pretrained(
+            model_id,
+            #token=os.getenv("HF_TOKEN")
+        )
 
 
     def generate(self,
                                  prompt,
-                                 max_tokens : int = 500,
+                                 max_tokens : int = 250,
                                  temperature : float = 0.6,
                                  ):
 
+        # TODO: MAke sure variations are different
         output = self.model.generate(
             input=prompt,
             max_new_tokens=max_tokens,
             do_sample=True,  # enable sampling
-            top_k=50,  # restrict to top 50 tokens
-            top_p=0.95,  # restrict to tokens covering 95% of prob mass
+            #top_k=50,  # restrict to top 50 tokens
+            #top_p=0.95,  # restrict to tokens covering 95% of prob mass
             temperature=temperature,  # control randomness
             return_type="str"  # return a string
         )

@@ -6,6 +6,11 @@ import itertools
 import numpy as np
 from functools import partial
 from tot.models import gpt
+import json
+
+
+json_thought = {}
+
 
 def get_value(task, x, y, n_evaluate_sample, cache_value=True):
     """
@@ -89,8 +94,16 @@ def get_proposals(task, x, y):
     """
     # In /tot/tasks/{task}.py gets the respective method 
     propose_prompt = task.propose_prompt_wrap(x, y)
+
+    json_thought[str(x)]["Prompt"] = propose_prompt
+
+    print(json_thought)
+
     # each line is a variation
-    proposals = gpt(propose_prompt, n=1, stop=None)[0].split('\n')
+    proposals = gpt(propose_prompt,
+                    n=2, stop=None,
+                    json = json_thought,
+                    x = x)[0].split('\n')
 
     #print(f"To debug: thought variations: {proposals}")
 
@@ -141,6 +154,15 @@ def solve(args, task, idx, to_print=True):
     x = task.get_input(idx)  # gets input at current index
     ys = ['']  # current output candidates / thought variations
     infos = []
+
+    global json_thought
+
+    json_thought[str(x)] = { "step" : "",
+                             "Prompt" : "",
+                             "Thought variation" : []}
+
+    print(json_thought)
+
     for step in range(task.steps): # each class instance has an attribute steps allowed to complete given task
         # generation
         if args.method_generate == 'sample':
@@ -150,8 +172,15 @@ def solve(args, task, idx, to_print=True):
             new_ys = [get_proposals(task, x, y) for y in ys]
 
         # the list of list for concurrent step's variation generation is a list of list
+        json_thought[str(x)]["step"] = str(step)
+
+        print(json_thought)
+
+        print(json.dumps(json_thought, indent=2))
+
         new_ys = list(itertools.chain(*new_ys)) # this flattens it into a single list
         ids = list(range(len(new_ys)))
+
 
         # evaluation method
         if args.method_evaluate == 'vote':
