@@ -31,11 +31,12 @@ def completions_with_backoff(**kwargs):
 def gpt(prompt,
         model="gpt2",
         temperature=0.7,
-        max_tokens=250,
-        n=2,
+        max_tokens=50,
+        n=1,
         stop=None,
         json = None,
-        x = None) -> list:
+        x = None,
+        proposals = False) -> list:
     """
     Generate completions from a prompt using OpenAI's chat models.
     Args:
@@ -61,14 +62,23 @@ def gpt(prompt,
                                           max_tokens=max_tokens,
                                           )
             n -= 1
-            print(raw_output_text)
-            outputs.append(raw_output_text.strip().split("Possible next steps:")[-1])
+            #print(f"To debug:raw output {raw_output_text}")
 
-            print(outputs)
 
-            json[str(x)]["Thought variation"].extend(outputs)
+            if proposals:
+                # Put raw output into json
+                json[x]["raw_output_prop"].append(raw_output_text)
 
-        print("To Debug: Step i with m variations for the input Y:\n\n" + "\n".join(str(_) for _ in outputs))
+                # If we look at the prompt anything after 'Possible next steps:' are variations
+                variation = raw_output_text.strip().split("Possible next steps:")[-1]
+                # append everything except the last line, bc the stop rn is no.of token; so not guaranteed that last variation is complete
+                outputs.append(variation.split("\n")[:-1])
+
+            if not proposals:
+                #json[x]["raw_output_eval"].append(raw_output_text)
+                print(raw_output_text)
+                outputs.append(raw_output_text)
+            #print(f"To debug: {outputs}")
         return outputs
     
     messages = [{"role": "user", "content": prompt}]

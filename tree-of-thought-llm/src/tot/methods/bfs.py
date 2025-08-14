@@ -32,7 +32,11 @@ def get_value(task, x, y, n_evaluate_sample, cache_value=True):
     if cache_value and value_prompt in task.value_cache:
         return task.value_cache[value_prompt]
     # Send to gpt to run the inference loop
-    value_outputs = gpt(value_prompt, n=n_evaluate_sample, stop=None)
+    value_outputs = gpt(value_prompt,
+                        n=n_evaluate_sample,
+                        stop=None,
+                        json=json_thought,
+                        x=x,)
     # goes to /tot/tasks/{task}.py to get the respective tasks's unwrap methods
     value = task.value_outputs_unwrap(x, y, value_outputs)
     if cache_value:
@@ -103,9 +107,19 @@ def get_proposals(task, x, y):
     proposals = gpt(propose_prompt,
                     n=2, stop=None,
                     json = json_thought,
-                    x = x)[0].split('\n')
+                    x = x,
+                    proposals = True)
 
-    #print(f"To debug: thought variations: {proposals}")
+    print(f"To debug: thought variations: {proposals}")
+
+
+    proposals = list(itertools.chain(*proposals))  # this flattens it into a single list
+
+    for proposal in proposals:
+        json_thought[str(x)]["thought_variation"][proposal] = []
+
+    #print(f"To debug: {json_thought}")
+
 
     # store each variation in list along with previous variation
     return [y + _ + '\n' for _ in proposals]
@@ -148,6 +162,8 @@ def solve(args, task, idx, to_print=True):
     """
     # the main model generation loop; goes to /tot/models.py
     global gpt
+    # make the json_thought object global
+    global json_thought
     # just adds these args without actually calling the function
     gpt = partial(gpt, model=args.backend, temperature=args.temperature)
     print(gpt)
@@ -155,13 +171,19 @@ def solve(args, task, idx, to_print=True):
     ys = ['']  # current output candidates / thought variations
     infos = []
 
-    global json_thought
+    """
+    json_thought = { 'data entry': { 'step' : 'int',
+                                     'prompt' : 'int',
+                                     `raw_output` : `str`,
+                                     'thought_variation' : {variation : [score1 = heuristic, score2 = circuit stability]} }
+    """
 
+    # Structure of JSON object
     json_thought[str(x)] = { "step" : "",
                              "Prompt" : "",
-                             "Thought variation" : []}
-
-    print(json_thought)
+                             "raw_output_prop": [],
+                             "raw_output_eval": [],
+                             "thought_variation" : {"" : []}}
 
     for step in range(task.steps): # each class instance has an attribute steps allowed to complete given task
         # generation
@@ -171,16 +193,18 @@ def solve(args, task, idx, to_print=True):
         elif args.method_generate == 'propose':
             new_ys = [get_proposals(task, x, y) for y in ys]
 
+
+        print(f"To debug: new_ys: {new_ys}")
+
         # the list of list for concurrent step's variation generation is a list of list
         json_thought[str(x)]["step"] = str(step)
 
-        print(json_thought)
-
-        print(json.dumps(json_thought, indent=2))
+        print(f"To debug: {json.dumps(json_thought, indent=4)}")
 
         new_ys = list(itertools.chain(*new_ys)) # this flattens it into a single list
-        ids = list(range(len(new_ys)))
+        print(f"To debug: flattened new_ys: {new_ys}")
 
+        ids = list(range(len(new_ys)))
 
         # evaluation method
         if args.method_evaluate == 'vote':
@@ -188,6 +212,11 @@ def solve(args, task, idx, to_print=True):
         elif args.method_evaluate == 'value':
             values = get_values(task, x, new_ys, args.n_evaluate_sample)
 
+        #Append score for each variation TODO remove comment line to add each eval to each thought variation
+        """
+        for elist, eval in zip(json_thought[str(x)]["thought_variation"].values(), values):
+            elist.append(eval)
+        """
         # selection
         if args.method_select == 'sample':
             ps = np.array(values) / sum(values)

@@ -27,3 +27,19 @@ python run.py \
 #      --task_end_index 2 \
 #       "${@}"
 
+: <<'COMMENT'
+--backend
+gpt2
+--task
+game24
+--task_start_index
+0
+--task_end_index
+1
+--method_generate
+propose
+--method_evaluate
+value
+--n_generate_sample
+2
+COMMENT

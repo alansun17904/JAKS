@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from transformer_lens import HookedTransformer
 
 import os
+import torch
 
 
 load_dotenv(dotenv_path="../.env")
@@ -40,21 +41,23 @@ class LLM():
 
         self.args = args
 
-        # Select device
-        #if torch.backends.mps.is_available():
-        #    self.device = "mps"
-        #    print("To debug: Using MPS")
-        #elif torch.cuda.is_available():
-        #    self.device = "cuda"
-        #else:
-        #    self.device = "cpu"
+        #Select device
+        if torch.backends.mps.is_available():
+            self.device = "mps"
+            print("To debug: Using MPS")
+        elif torch.cuda.is_available():
+            self.device = "cuda"
+        else:
+            self.device = "cpu"
 
 
         from dotenv import load_dotenv
         load_dotenv("../../../.env")
         self.model = HookedTransformer.from_pretrained(
             model_id,
+            device = self.device,
             #token=os.getenv("HF_TOKEN")
+
         )
 
 
@@ -69,8 +72,8 @@ class LLM():
             input=prompt,
             max_new_tokens=max_tokens,
             do_sample=True,  # enable sampling
-            #top_k=50,  # restrict to top 50 tokens
-            #top_p=0.95,  # restrict to tokens covering 95% of prob mass
+            top_k=50,  # restrict to top 50 tokens
+            top_p=0.95,  # restrict to tokens covering 95% of prob mass
             temperature=temperature,  # control randomness
             return_type="str"  # return a string
         )
