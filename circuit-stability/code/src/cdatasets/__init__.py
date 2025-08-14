@@ -25,6 +25,7 @@ from .dyck_dataset import DyckDataset
 from .date_dataset import DateDataset
 from .sports_dataset import SportsDataset
 from .movie_dataset import MovieDataset
+from .custom_dataset import CustomDataset
 from .prompt_dataaset import PromptDataset
 from .prompts import PromptFormatter, ZeroShot, FewShot, ChainOfThought
 
@@ -61,6 +62,7 @@ class DatasetBuilder:
         "date": DateDataset,
         "sports": SportsDataset,
         "movie": MovieDataset,
+        "custom": CustomDataset,
     }
 
     def __init__(self, name: str):

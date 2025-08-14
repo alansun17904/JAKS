@@ -1,0 +1,109 @@
+[
+    {
+      "Input" : "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 1 1 11 11\\nPossible next steps:\\n",
+      "labels":["1 + 8 = 4 (right: 4 4 8)",
+        "4 3 4 6 (left: 3 6 8)",
+        "14 − 2 = 12 (left: 8 8 12)",
+        "14 − 8 = 6 (right: 2 6 8)"]
+    },
+    {
+      "Input": "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 6 7 8 9\\nPossible next steps:\\n",
+      "labels": [
+        "17 x 3 = ?! (left: 4 10 2)",
+        "7 + 9 = 10 (left: 6 8 10)",
+        "7 * 8 = 56 (left: 6 9 56)",
+        "8 - 9 = -1 (left: -1 6 7)"
+      ]
+    },
+    {
+      "Input": "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 2 6 11 13\\nPossible next steps:\\n",
+      "labels": [
+        "5 % 13 = ?! (left: 6 9 56)",
+        "11 * 2 = 7 (left: 6 7 13)",
+        "6 + 2 = 8 (left: 8 11 13)",
+        "2 - 6 = -4 (left: -4 11 13)"
+      ]
+    },
+    {
+      "Input": "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 6 7 8 9\\nPossible next steps:\\n",
+      "labels": [
+        "1 ^ 2 = abc (left: 3 6 8)",
+        "9 / 7 = 4 (left: 4 6 8)",
+        "7 * 8 = 56 (left: 6 9 56)",
+        "9 + 7 = 16 (left: 6 8 16)"
+      ]
+    },
+    {
+      "Input": "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 3 7 9 14\\nPossible next steps:\\n",
+      "labels": [
+        "10 ^ 19 = ?! (left: 6 9 56)",
+        "7 - 9 = 11 (left: 3 11 14)",
+        "7 - 3 = 4 (left: 4 9 14)",
+        "14 / 7 = 2 (left: 2 3 9)"
+      ]
+    },
+    {
+      "Input": "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 4 9 10 12\\nPossible next steps:\\n",
+      "labels": [
+        "7 ^ 10 = abc (left: 3 6 8)",
+        "12 * 10 = 9 (left: 4 9 9)",
+        "10 + 9 = 19 (left: 4 12 19)",
+        "4 - 9 = -5 (left: -5 10 12)"
+      ]
+    },
+    {
+      "Input": "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 5 8 9 12\\nPossible next steps:\\n",
+      "labels": [
+        "15 ^ 3 = ## (left: -5 10 12)",
+        "9 / 5 = 9 (left: 8 9 12)",
+        "9 + 8 = 17 (left: 5 12 17)",
+        "5 * 8 = 40 (left: 9 12 40)"
+      ]
+    },
+    {
+      "Input": "Input: 1 4 5 9\\nPossible next steps:\\n1 + 4 = 5 (left: 5 5 9)\\n9 - 1 = 8 (left: 4 5 8)\\n5 * 4 = 20 (left: 1 9 20)\\n9 / 1 = 9 (left: 4 5 9)\\n5 - 1 = 4 (left: 4 4 9)\\n4 + 9 = 13 (left: 1 5 13)\\n",
+      "labels": [
+        "4 % 5 = 4 (left: 4 4 9)",
+        "9 - 5 = 4 (left: 1 4 4)",
+        "5 + 1 = 6 (left: 4 6 9)",
+        "1 * 9 = 9 (left: 4 5 9)"
+      ]
+    },
+    {
+      "Input": "Input: 3 5 7 11\\nPossible next steps:\\n3 + 5 = 8 (left: 7 8 11)\\n7 - 3 = 4 (left: 4 5 11)\\n11 / 5 = 2.2 (left: 2.2 3 7)\\n5 * 7 = 35 (left: 3 11 35)\\n11 - 7 = 4 (left: 3 4 5)\\n3 * 11 = 33 (left: 5 7 33)\\n",
+      "labels": [
+        "7 + 11 = 18 (left: 3 5 18)",
+        "5 - 11 = -6 (left: -6 3 7)",
+        "11 % 3 = 2 (left: 2 5 7)",
+        "3 / 7 = 0.43 (left: 0.43 5 11)"
+      ]
+    },
+    {
+      "Input": "Input: 2 3 6 15\\nPossible next steps:\\n2 + 3 = 5 (left: 5 6 15)\\n15 - 6 = 9 (left: 2 3 9)\\n6 / 3 = 2 (left: 2 2 15)\\n3 * 15 = 45 (left: 2 6 45)\\n15 + 2 = 17 (left: 3 6 17)\\n",
+      "labels": [
+        "6 - 2 = 4 (left: 3 4 15)",
+        "15 % 6 = 3 (left: 2 3 3)",
+        "3 + 6 = 9 (left: 2 9 15)",
+        "2 * 15 = 30 (left: 3 6 30)"
+      ]
+    },
+    {
+      "Input": "Input: 4 6 10 12\\nPossible next steps:\\n4 + 6 = 10 (left: 10 10 12)\\n12 - 4 = 8 (left: 6 8 10)\\n10 / 5 = 2 (left: 4 6 2)\\n6 * 4 = 24 (left: 10 12 24)\\n12 + 6 = 18 (left: 4 10 18)\\n",
+      "labels": [
+        "10 - 6 = 4 (left: 4 4 12)",
+        "6 % 4 = 2 (left: 2 10 12)",
+        "4 * 10 = 40 (left: 6 12 40)",
+        "12 / 6 = 2 (left: 2 4 10)"
+      ]
+    },
+    {
+      "Input": "Input: 7 8 13 15\\nPossible next steps:\\n7 + 8 = 15 (left: 13 15 15)\\n15 - 8 = 7 (left: 7 13 7)\\n13 / 7 = 1.85 (left: 1.85 8 15)\\n8 * 7 = 56 (left: 13 15 56)\\n15 + 13 = 28 (left: 7 8 28)\\n",
+      "labels": [
+        "8 - 7 = 1 (left: 1 13 15)",
+        "15 % 13 = 2 (left: 2 7 8)",
+        "7 * 13 = 91 (left: 8 15 91)",
+        "13 - 8 = 5 (left: 5 7 15)"
+      ]
+    }
+    ]
+    

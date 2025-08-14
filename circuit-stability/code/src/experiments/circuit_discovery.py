@@ -6,9 +6,9 @@ import argparse
 import torch
 from functools import partial
 
-from ..cdatasets import DatasetBuilder, PromptFormatter
-from ..eap import Graph, attribute, evaluate_baseline, evaluate_graph
-from .utils import (
+from cdatasets import DatasetBuilder, PromptFormatter
+from eap import Graph, attribute, evaluate_baseline, evaluate_graph
+from utils import (
     seed_everything,
     parse_key_value_pairs,
     make_dataset,
@@ -76,8 +76,16 @@ def main():
     dataset = make_dataset(
         opts.dataset, opts.data_params, opts.format, opts.format_params
     )
-    model = HookedTransformer.from_pretrained(opts.model_name, device=device)
+
+    model = HookedTransformer.from_pretrained(opts.model_name, device=device,)
+
+
     dataloader = dataset.to_dataloader(model, opts.batch_size)
+    
+    for batch in dataloader:
+        for idx, item in enumerate(batch):
+            print(f"index: {idx} and the len of tuple is {len(item)}")
+            print(f"{[type(x) for x in item]}")
     
     # Print batch size info
     print(f"Batch size: {opts.batch_size}")

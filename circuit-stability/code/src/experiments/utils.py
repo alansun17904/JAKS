@@ -5,7 +5,7 @@ import torch
 import numpy as np
 from functools import wraps
 
-from ..cdatasets import DatasetBuilder, PromptFormatter
+from cdatasets import DatasetBuilder, PromptFormatter
 
 import torch.nn.functional as F
 from transformer_lens import HookedTransformer
@@ -160,6 +160,57 @@ def extract_equal_sign(model, logits, clean_logits, input_length, labels):
     return logits[..., equal_sign_pos:], clean_logits[..., equal_sign_pos:], labels
 
 
+def extract_tail(model, logits, clean_logits, input_length, labels, tail_len="all"):
+    """
+    Slice logits/clean_logits to the continuation ("tail") only.
+    Starts at start = input_length - 1 (the first next-token prediction).
+    Returns either [B, V] (when tail_len==1) or [B, L, V] with a common L across the batch.
+
+    Args:
+        tail_len:
+            - int N  -> take N steps after the prompt (clipped if needed)
+            - "all"  -> take ALL available steps, aligned by the MIN tail length across the batch
+    """
+    import torch
+
+    B, T, V = logits.shape
+    device = logits.device
+
+    # per-item start index where the model predicts the first continuation token
+    start = (input_length - 1).clamp(min=0)  # [B]
+
+    # how many steps are available for each item
+    avail = T - start  # [B]
+
+    if tail_len == "all":
+        L = int(avail.min().item())  # align by min so every item has at least L steps
+    else:
+        L = int(tail_len)
+        # ensure we don't overrun any sequence
+        L = max(1, min(L, int(avail.min().item())))
+
+    # fallback safety
+    if L <= 0:
+        L = 1
+
+    if L == 1:
+        # return [B, V] like extract_last_token
+        idx = start.clamp(max=T - 1)
+        tail_logits = logits[torch.arange(B, device=device), idx, :]      # [B, V]
+        tail_clean  = clean_logits[torch.arange(B, device=device), idx, :] # [B, V]
+        return tail_logits, tail_clean, labels
+
+    # build [B, L, V] by per-item slicing with the same L for all
+    out_logits = torch.stack(
+        [logits[b, int(start[b]) : int(start[b]) + L, :] for b in range(B)], dim=0
+    )  # [B, L, V]
+    out_clean = torch.stack(
+        [clean_logits[b, int(start[b]) : int(start[b]) + L, :] for b in range(B)], dim=0
+    )  # [B, L, V]
+
+    return out_logits, out_clean, labels
+
+
 def extract_none(model, logits, clean_logits, input_length, labels):
     return logits, clean_logits, labels
 
@@ -178,6 +229,8 @@ def get_extraction(extraction_id):
         return extract_last_token
     elif extraction_id == "equal_sign":
         return extract_equal_sign
+    elif extraction_id == "tail":
+        return extract_tail
     elif extraction_id == "none":
         return extract_none
     else:
