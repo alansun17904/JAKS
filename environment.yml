@@ -1,0 +1,16 @@
+name: circuit_discovery
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pytorch=2.1.*
+  - pytorch-cuda=12.1
+  - numpy
+  - einops
+  - jupyterlab
+  - ipykernel
+  - pip
+  - pip:
+    - uv
