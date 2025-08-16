@@ -3,6 +3,7 @@
 
 # Your unique local ignore
 experiments/data/
+cs-venv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

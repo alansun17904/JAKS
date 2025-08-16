@@ -36,9 +36,9 @@ class CustomDataset(BaseDataset):
 
         # Manual single-example mode
         if manual_mode:
-            clean_str = "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 1 1 11 11\\nPossible next steps:\\n"
-            label_str = '14 − 2 = 12 (left: 8 8 12)'
-            corrupted_str = "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 6 7 8 9\\nPossible next steps:\\n"
+            clean_str =  "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 1 1 11 11\\nPossible next steps:\\n 1 + 8 = 4 (right: 4 4 8)"#"When John and Mary went to the store, John gave the bag to"  
+            label_str = "sad"
+            corrupted_str = "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 2 6 11 13\\nPossible next steps:\\n5 % 13 = ?! (left: 6 9 56)" #"When John and Mary went to the store, Mary gave the bag to"          
 
             self._examples = [{"input": clean_str, "target": label_str}]
             self._clean_examples = [clean_str]
@@ -52,7 +52,7 @@ class CustomDataset(BaseDataset):
     def get_questions(self):
 
         if self._examples:
-            return
+            return None
 
         with open(Path(__file__).parent / "data" / self.data_file, encoding="utf-8") as f:
             task = json.load(f)  # list[dict]
@@ -72,9 +72,9 @@ class CustomDataset(BaseDataset):
             raise NotImplementedError(
                 "Chain-of-thought not supported for arithmetic problems."
             )
-         # Manual mode — nothing to format
+        # Manual mode — nothing to format
         if self._examples and self._clean_examples:
-            return
+            return None
 
         Qs = [v["input"] for v in self._examples]
         As = [""] * len(self._examples) # just a filler to not break code
@@ -88,9 +88,9 @@ class CustomDataset(BaseDataset):
         self._corrupted_examples = self._clean_examples[:]
         random.shuffle(self._corrupted_examples)
 
-        #Qs, As = [v["input"] for v in self._examples], [
-        #    v["target"] for v in self._examples
-        #]
+        Qs, As = [v["input"] for v in self._examples], [
+            v["target"] for v in self._examples
+        ]
 
 
     def to_dataloader(self, model, batch_size: int, collate_fn=None):

@@ -236,6 +236,14 @@ def get_scores_eap_ig(
             with model.hooks(fwd_hooks=fwd_hooks_corrupted):
                 _ = model(corrupted_tokens, attention_mask=attention_mask)
 
+                # --- DEBUG: print corrupted predictions ---
+                pred_ids_corr = _.argmax(dim=-1)  # [B, T]
+                decoded_corr = [model.to_string(seq) for seq in pred_ids_corr]
+                print("\n[DEBUG] Corrupted predicted sequences:")
+                for text in decoded_corr:
+                    print(text)
+                # ------------------------------------------
+
             input_activations_corrupted = activation_difference[
                 :, :, graph.forward_index(graph.nodes["input"])
             ].clone()

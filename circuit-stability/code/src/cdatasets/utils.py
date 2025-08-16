@@ -3,6 +3,9 @@ from transformer_lens.utils import get_attention_mask
 
 def generic_collate(model, xs):
     clean, corrupted_strings, labels = zip(*xs)
+    print(f"To debug: Clean_inp: {clean}")
+    print(f"To debug: Corr_inp: {corrupted_strings}")
+    print(f"To debug: Lables: {labels}")
     # the clean and corrupted strings together
     batch_size = len(clean)
     all_examples = clean + corrupted_strings

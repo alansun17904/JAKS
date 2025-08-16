@@ -68,6 +68,8 @@ def main():
     # Print device info
     device = opts.device
     print(f"Using device: {device}")
+
+    
     if device == "cuda" and torch.cuda.is_available():
         print(f"GPU: {torch.cuda.get_device_name(0)}")
         if "3050" in torch.cuda.get_device_name(0) and "Ti" in torch.cuda.get_device_name(0):
