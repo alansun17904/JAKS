@@ -64,6 +64,7 @@ def parse_args():
 def main():
     opts = parse_args()
     seed_everything(opts.seed)
+    n_thoughts = 5
     
     # Print device info
     device = opts.device
@@ -81,7 +82,7 @@ def main():
 
     model = HookedTransformer.from_pretrained(opts.model_name, device=device)
 
-    for i in range (0,2):
+    for i in range (len(dataset)):
         dataloader = dataset.to_dataloader(model, opts.batch_size, indices=[i])
         
         for batch in dataloader:
@@ -104,7 +105,7 @@ def main():
         g = Graph.from_model(model)
         attribute(model, g, dataloader, metric, method="EAP-IG", ig_steps=opts.ig_steps)
         g.apply_topn(200, absolute=False)
-        g.to_json(f"{i}_th_thought{opts.ofname}.json")
+        g.to_json(f"{i//n_thoughts}Qs_{i}_th_thought{opts.ofname}.json")
         g.prune_dead_nodes()
 
         baseline = evaluate_baseline(model, dataloader, metric)
@@ -115,7 +116,8 @@ def main():
         print(f"The circuit incurred extra {diff} loss.")
 
         gz = g.to_graphviz()
-        gz.draw(f"{i}_th_thought{opts.ofname}.png", prog="dot")
+        gz.draw(f"{i//n_thoughts}Qs_{i}_th_thought{opts.ofname}.png", prog="dot")
+
 
 
 if __name__ == "__main__":
