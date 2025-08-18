@@ -1,40 +1,8 @@
 [
     {
       "Input" : "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 1 1 11 11\\nPossible next steps:\\n",
-      "labels":["1 + 8 = 4 (right: 4 4 8)",
-        "4 3 4 6 (left: 3 6 8)",
-        "14 − 2 = 12 (left: 8 8 12)",
-        "14 − 8 = 6 (right: 2 6 8)"]
-    },
-    {
-      "Input": "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 6 7 8 9\\nPossible next steps:\\n",
-      "labels": [
-        "17 x 3 = ?! (left: 4 10 2)",
-        "7 + 9 = 10 (left: 6 8 10)",
-        "7 * 8 = 56 (left: 6 9 56)",
-        "8 - 9 = -1 (left: -1 6 7)"
-      ]
-    },
-    {
-      "Input": "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 2 6 11 13\\nPossible next steps:\\n",
-      "labels": [
-        "5 % 13 = ?! (left: 6 9 56)",
-        "11 * 2 = 7 (left: 6 7 13)",
-        "6 + 2 = 8 (left: 8 11 13)",
-        "2 - 6 = -4 (left: -4 11 13)"
-      ]
-    },
-    {
-      "Input": "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 6 7 8 9\\nPossible next steps:\\n",
-      "labels": [
-        "1 ^ 2 = abc (left: 3 6 8)",
-        "9 / 7 = 4 (left: 4 6 8)",
-        "7 * 8 = 56 (left: 6 9 56)",
-        "9 + 7 = 16 (left: 6 8 16)"
-      ]
-    },
-    {
-
+      "labels":["1 + 8 = 4 (right: 4 4 8)", "11 + 11 = 22 (left: 22 1 1)"]
+    }
 ]
 
 

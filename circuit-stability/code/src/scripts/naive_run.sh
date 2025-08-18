@@ -6,7 +6,7 @@ export PYTHONPATH="/workspace/JAKS/circuit-stability/code/src:${PYTHONPATH:-}"
 SRC="/workspace/JAKS/circuit-stability/code/src/experiments/circuit_discovery.py"
 
 python "$SRC" \
-  "gpt2" \
+  "google/gemma-2-9b-it" \
   "output1" \
   --batch_size 1 \
   --ndevices 1 \

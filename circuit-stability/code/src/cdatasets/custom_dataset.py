@@ -16,7 +16,7 @@ from .base import BaseDataset
 from .prompts import PromptFormatter
 from .utils import generic_collate
 
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Subset
 
 class CustomDataset(BaseDataset):
     description = "Game24 problem: given an example, list all possible first steps for the input"
@@ -58,9 +58,9 @@ class CustomDataset(BaseDataset):
         for ex in task:
             single_input = ex["Input"].strip().replace("\n", "").replace("\t", "")
             for thoughts in ex["labels"]:
-                single_input = single_input + thoughts
+                combined = single_input + thoughts
                 print(thoughts)
-                self._examples.append({"input": single_input, "target": ""})
+                self._examples.append({"input": combined, "target": ""})
                 print(self._examples)
         
         print(self._examples)
@@ -84,12 +84,13 @@ class CustomDataset(BaseDataset):
             formatter.format(self.description, ex["input"], questions=Qs, answers=As)
             for ex in self._examples
         ]
-        print(self._clean_examples)
+        #print(self._clean_examples)
 
         self._labels = [ex["target"] for ex in self._examples]  # <-- list of lists
         print(self._labels)
-        self._corrupted_examples = self._clean_examples[:]
-        self._corrupted_examples = ["Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 2 6 11 13\\nPossible next steps:\\n5 % 13 = ?! (left: 6 9 56)"]
+        corrupted_prompt = "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 2 6 11 13\\nPossible next steps:\\n5 % 13 = ?! (left: 6 9 56)"
+        #self._corrupted_examples = self._clean_examples[:]
+        self._corrupted_examples = [corrupted_prompt] * len(self._clean_examples)
 
         #random.shuffle(self._corrupted_examples)
 
@@ -98,9 +99,10 @@ class CustomDataset(BaseDataset):
         ]
 
 
-    def to_dataloader(self, model, batch_size: int, collate_fn=None):
+    def to_dataloader(self, model, batch_size: int, collate_fn=None, indices=None):
         collate_fn = partial(generic_collate, model)
-        return DataLoader(self, batch_size=batch_size, collate_fn=collate_fn)
+        ds = self if indices is None else Subset(self, indices)
+        return DataLoader(ds, batch_size=batch_size, collate_fn=collate_fn)
 
     def __len__(self):
         return len(self._examples)

@@ -81,41 +81,41 @@ def main():
 
     model = HookedTransformer.from_pretrained(opts.model_name, device=device)
 
+    for i in range (0,2):
+        dataloader = dataset.to_dataloader(model, opts.batch_size, indices=[i])
+        
+        for batch in dataloader:
+            for idx, item in enumerate(batch):
+                print(f"index: {idx} and the len of tuple is {len(item)}")
+                print(f"{[type(x) for x in item]}")
+        
+        # Print batch size info
+        print(f"Batch size: {opts.batch_size}")
 
-    dataloader = dataset.to_dataloader(model, opts.batch_size)
-    
-    for batch in dataloader:
-        for idx, item in enumerate(batch):
-            print(f"index: {idx} and the len of tuple is {len(item)}")
-            print(f"{[type(x) for x in item]}")
-    
-    # Print batch size info
-    print(f"Batch size: {opts.batch_size}")
+        model.cfg.use_split_qkv_input = True
+        model.cfg.use_attn_result = True
+        model.cfg.use_hook_mlp_in = True
 
-    model.cfg.use_split_qkv_input = True
-    model.cfg.use_attn_result = True
-    model.cfg.use_hook_mlp_in = True
+        pure_metric = get_metric(opts.patching_metric)
+        extraction = get_extraction(opts.extraction)
 
-    pure_metric = get_metric(opts.patching_metric)
-    extraction = get_extraction(opts.extraction)
+        metric = extraction_schema(extraction, model)(pure_metric)
 
-    metric = extraction_schema(extraction, model)(pure_metric)
+        g = Graph.from_model(model)
+        attribute(model, g, dataloader, metric, method="EAP-IG", ig_steps=opts.ig_steps)
+        g.apply_topn(200, absolute=False)
+        g.to_json(f"{i}_th_thought{opts.ofname}.json")
+        g.prune_dead_nodes()
 
-    g = Graph.from_model(model)
-    attribute(model, g, dataloader, metric, method="EAP-IG", ig_steps=opts.ig_steps)
-    g.apply_topn(200, absolute=False)
-    g.to_json(f"{opts.ofname}.json")
-    g.prune_dead_nodes()
+        baseline = evaluate_baseline(model, dataloader, metric)
+        results = evaluate_graph(model, g, dataloader, metric)
 
-    baseline = evaluate_baseline(model, dataloader, metric)
-    results = evaluate_graph(model, g, dataloader, metric)
+        diff = (results - baseline).mean().item()
 
-    diff = (results - baseline).mean().item()
+        print(f"The circuit incurred extra {diff} loss.")
 
-    print(f"The circuit incurred extra {diff} loss.")
-
-    gz = g.to_graphviz()
-    gz.draw(f"{opts.ofname}.png", prog="dot")
+        gz = g.to_graphviz()
+        gz.draw(f"{i}_th_thought{opts.ofname}.png", prog="dot")
 
 
 if __name__ == "__main__":
