@@ -1,4 +1,4 @@
-"""arith_dataset.py
+"""custom_dataset.py
 Generates a dataset of random arithmetic problems of various lengths with
 different operations and outputs them as a json file.
 """
@@ -12,16 +12,14 @@ import numpy as np
 from functools import partial
 import re
 
-
 from .base import BaseDataset
 from .prompts import PromptFormatter
 from .utils import generic_collate
 
-
 from torch.utils.data import DataLoader
 
 class CustomDataset(BaseDataset):
-    description = "Solve the following arithmetic problems."
+    description = "Game24 problem: given an example, list all possible first steps for the input"
     data_file = "custom.json"
 
     def __init__(self, n=5, append_ans=True):
@@ -32,14 +30,13 @@ class CustomDataset(BaseDataset):
         self._clean_examples = []
         self._corrupted_examples =  []
         self._labels = []
-        manual_mode = True
+        manual_mode = False
 
         # Manual single-example mode
         if manual_mode:
-            clean_str =  "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 1 1 11 11\\nPossible next steps:\\n 1 + 8 = 4 (right: 4 4 8)"#"When John and Mary went to the store, John gave the bag to"  
-            label_str = "sad"
-            corrupted_str = "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 2 6 11 13\\nPossible next steps:\\n5 % 13 = ?! (left: 6 9 56)" #"When John and Mary went to the store, Mary gave the bag to"          
-
+            clean_str = "John and mary went together. John gave the book to" 
+            label_str = "Mary"
+            corrupted_str = "John and mary went together. Mary gave the book to"
             self._examples = [{"input": clean_str, "target": label_str}]
             self._clean_examples = [clean_str]
             self._corrupted_examples = [corrupted_str if corrupted_str else clean_str]
@@ -60,12 +57,16 @@ class CustomDataset(BaseDataset):
         self._examples = []
         for ex in task:
             single_input = ex["Input"].strip().replace("\n", "").replace("\t", "")
-            single_target = ex["labels"][1]
+            for thoughts in ex["labels"]:
+                single_input = single_input + thoughts
+                print(thoughts)
+                self._examples.append({"input": single_input, "target": ""})
+                print(self._examples)
+        
+        print(self._examples)
 
-            self._examples.append({"input": single_input, "target": single_target})
-
-        random.shuffle(self._examples)
-        self._examples = self._examples[: self.n]
+        #random.shuffle(self._examples)
+        #self._examples = self._examples[: self.n]
 
     def format_questions(self, formatter: PromptFormatter):
         if formatter.name == "chain-of-thought":
@@ -83,10 +84,14 @@ class CustomDataset(BaseDataset):
             formatter.format(self.description, ex["input"], questions=Qs, answers=As)
             for ex in self._examples
         ]
+        print(self._clean_examples)
 
         self._labels = [ex["target"] for ex in self._examples]  # <-- list of lists
+        print(self._labels)
         self._corrupted_examples = self._clean_examples[:]
-        random.shuffle(self._corrupted_examples)
+        self._corrupted_examples = ["Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 2 6 11 13\\nPossible next steps:\\n5 % 13 = ?! (left: 6 9 56)"]
+
+        #random.shuffle(self._corrupted_examples)
 
         Qs, As = [v["input"] for v in self._examples], [
             v["target"] for v in self._examples

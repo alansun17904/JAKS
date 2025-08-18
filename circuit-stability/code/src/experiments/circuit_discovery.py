@@ -79,7 +79,7 @@ def main():
         opts.dataset, opts.data_params, opts.format, opts.format_params
     )
 
-    model = HookedTransformer.from_pretrained(opts.model_name, device=device,)
+    model = HookedTransformer.from_pretrained(opts.model_name, device=device)
 
 
     dataloader = dataset.to_dataloader(model, opts.batch_size)
