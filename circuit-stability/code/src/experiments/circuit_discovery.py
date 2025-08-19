@@ -105,7 +105,7 @@ def main():
         g = Graph.from_model(model)
         attribute(model, g, dataloader, metric, method="EAP-IG", ig_steps=opts.ig_steps)
         g.apply_topn(200, absolute=False)
-        g.to_json(f"{i//n_thoughts}Qs_{i}_th_thought{opts.ofname}.json")
+        g.to_json(f"{i//n_thoughts}_th_thought_{i}_th_variation.png.json")
         g.prune_dead_nodes()
 
         baseline = evaluate_baseline(model, dataloader, metric)
@@ -116,7 +116,7 @@ def main():
         print(f"The circuit incurred extra {diff} loss.")
 
         gz = g.to_graphviz()
-        gz.draw(f"{i//n_thoughts}Qs_{i}_th_thought{opts.ofname}.png", prog="dot")
+        gz.draw(f"{i//n_thoughts}_th_thought_{i}_th_variation.png", prog="dot")
 
 
 

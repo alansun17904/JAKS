@@ -19,10 +19,7 @@ from .utils import generic_collate
 from torch.utils.data import DataLoader, Subset
 
 class CustomDataset(BaseDataset):
-    description = """You are solving the Game of 24. 
-        Rules: You are given 4 numbers. At each step, you must combine exactly two numbers using one of the four basic operations (+, −, ×, ÷). The result replaces those two numbers, leaving you with 3 numbers. Continue until only one number remains. The goal is to reach exactly 24.
-        Task: Given an input set of 4 numbers, first think step by step (chain-of-thought) about promising strategies and possible useful intermediate numbers (like 22, 12, 2, etc., that combine well to 24).
-        Then, list all possible next steps in the following format:"""
+    description = """You are solving the Game of 24. Given 4 numbers At each step, you must combine exactly two numbers using one of the four basic operations (+, −, ×, ÷)"""
     data_file = "custom.json"
 
     def __init__(self, n=5, append_ans=True):
@@ -60,11 +57,11 @@ class CustomDataset(BaseDataset):
         self._examples = []
         for ex in task:
             single_input = ex["Input"].strip().replace("\n", "").replace("\t", "")
-            for thoughts in ex["labels"]:
-                combined = single_input + thoughts
-                print(thoughts)
-                self._examples.append({"input": combined, "target": ""})
-                print(self._examples)
+            #for thoughts in ex["labels"]:
+            #    combined = single_input + thoughts
+            #    print(thoughts)
+            self._examples.append({"input": single_input, "target": ""})
+            #    print(self._examples)
         
         print(self._examples)
 
