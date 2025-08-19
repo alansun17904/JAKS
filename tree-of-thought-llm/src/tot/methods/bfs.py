@@ -7,7 +7,8 @@ import numpy as np
 from functools import partial
 from tot.models import gpt
 import json
-
+from pathlib import Path
+from datetime import datetime
 
 json_thought = {}
 
@@ -147,6 +148,16 @@ def get_samples(task, x, y, n_generate_sample, prompt_sample, stop):
     samples = gpt(prompt, n=n_generate_sample, stop=stop)
     return [y + _ for _ in samples]
 
+
+
+### adding a function for writing to json over here and calling it at the end of solve
+def thought_to_json(dictionary, filename):
+    p = Path("circuit-stability/code/src/cdatasets/data") / filename
+    p.parent.mkdir(parents=True, exist_ok=True)
+    with p.open("w") as f:
+        json.dump(dictionary, f, indent=4)
+        f.write("\n")
+
 def solve(args, task, idx, to_print=True):
     """
     Main BFS search loop for generating and selecting candidate solutions step by step.
@@ -200,7 +211,7 @@ def solve(args, task, idx, to_print=True):
         json_thought[str(x)]["step"] = str(step)
 
         print(f"To debug: {json.dumps(json_thought, indent=4)}")
-
+        
         new_ys = list(itertools.chain(*new_ys)) # this flattens it into a single list
         print(f"To debug: flattened new_ys: {new_ys}")
 
@@ -235,6 +246,12 @@ def solve(args, task, idx, to_print=True):
         infos.append({'step': step, 'x': x, 'ys': ys, 'new_ys': new_ys, 'values': values, 'select_new_ys': select_new_ys})
         ys = select_new_ys
     
+    ### calling the function from earlier
+    ### using timestamps just so that we can use the code over and over and not have to change anything
+    name = f"{datetime.now():%Y%m%d-%H%M%S}"
+    thought_to_json(json_thought, f"json_thought_{name}.json")
+
+
     if to_print: 
         print(ys)
     return ys, {'steps': infos}
