@@ -9,7 +9,7 @@
       "thought_variation": {
       "1 + 8 = 4 (right: 4 4 8)" : { 
                                       "step" : "1",
-                                      "Prompt" : "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 1 1 11 11\n Next step:\n1 + 8 = 4 (right: 4 4 8)\nPossible next steps:\n",
+                                      "Prompt" : "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: \n Next step:\n \nPossible next steps:\n",
                                       "raw_output_prop": [],
                                       "raw_output_eval": [],
                                       "thought_variation": {
@@ -17,7 +17,7 @@
                                                                     "step" : "2",
                                                                     "raw_output_prop": [],
                                                                     "raw_output_eval": [],
-                                                                    "Prompt" : "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: \n Next step:  \nPossible next steps:\n",
+                                                                    "Prompt" : "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: \n Next step: \nPossible next steps:\n",
                                                                     "thought_variation" : [
                                                                       "16 + 8 = 24 (left: 24)",
                                                                       "16 - 8 = 8 (left: 8)",
