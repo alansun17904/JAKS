@@ -6,78 +6,10 @@
 
 
 ## Setup
-1. Get hugginface access token here: https://huggingface.co/settings/tokens (for gated models) (https://transformerlensorg.github.io/TransformerLens/content/getting_started.html)
-
-2. Follow below command to get `tot` package:
-
-```bash
-git clone https://github.com/princeton-nlp/tree-of-thought-llm
-cd tree-of-thought
-# for mac use 
-pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/nightly/cpu
-# for others
-pip install -r requirements.txt 
-
-pip install -e .  # install `tot` package
-```
 
 **After setting up the tot package**
 1. Create an `.env` file inside the `JAKS` folder 
 2. Create an `HF_TOKEN` variable and add your huggingface access token
-
-## File Structure
-
-```bash
-## File Structure
-
-```{bash}
-├── MANIFEST.in
-├── pyproject.toml
-├── README.md
-├── requirements.txt            
-├── run.py                      # contains the main entry point 
-├── scripts                     # Has bash scripts to run each task 
-│   ├── crosswords  
-│   │   ├── cot_sampling.sh
-│   │   ├── search_crosswords-dfs.ipynb    # Has depth first search
-│   │   └── standard_sampling.sh
-│   ├── game24
-│   │   ├── bfs.sh
-│   │   ├── cot_sampling.sh
-│   │   └── standard_sampling.sh
-│   └── text
-│       ├── bfs.sh
-│       ├── cot_sampling.sh
-│       └── standard_sampling.sh
-├── setup.py
-└── src
-    └── tot
-        ├── __init__.py
-        ├── data                 # Dataset in .csv .json .txt format for each task
-        │   ├── 24
-        │   │   └── 24.csv
-        │   ├── crosswords
-        │   │   ├── mini0505_0_100_5.json
-        │   │   └── mini0505.json
-        │   └── text
-        │       └── data_100_random_text.txt
-        ├── methods              # Implements the BFS algorithm
-        │   └── bfs.py
-        ├── models.py            # Has the function that calls the actual completion
-        ├── hf_llm.py            # Has hugging face class (just in case)
-        ├── t_lens_generate.py   # has inference generation through transformer lens
-        ├── prompts              # Has prompts as 'str' for each tasks
-        │   ├── crosswords.py
-        │   ├── game24.py
-        │   └── text.py
-        └── tasks                # Has the class definition of each task (task dependent methods)
-            ├── __init__.py
-            ├── base.py
-            ├── crosswords.py
-            ├── game24.py
-            └── text.py
-
-```
 
 ## Quick Start To Run Locally For One Inference
 

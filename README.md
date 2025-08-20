@@ -67,7 +67,7 @@ cd JAKS
 bash install.sh
 ```
 
-1. Get hugginface access token here: https://huggingface.co/settings/tokens (for gated models) (https://transformerlensorg.github.io/TransformerLens/content/getting_started.html)
+**Note:** Get hugginface access token here: https://huggingface.co/settings/tokens (for gated models) (https://transformerlensorg.github.io/TransformerLens/content/getting_started.html)
 
 The circuit stability codebase relies on a `conda` environment whose dependencies are listed in `circuit-stability/notebooks-source/config/environment.yml`. Before installing this environment, you need to install `Graphviz` (required for circuit visualization). To make things easy, you can directly run 
 
