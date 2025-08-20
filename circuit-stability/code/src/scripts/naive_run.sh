@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
 # Point Python at src so `eap`, `experiments`, `utils` can be imported
-export PYTHONPATH="/workspace/JAKS/circuit-stability/code/src:${PYTHONPATH:-}"
+export PYTHONPATH="$(pwd)/circuit-stability/code/src:${PYTHONPATH:-}"
 
-SRC="/workspace/JAKS/circuit-stability/code/src/experiments/circuit_discovery.py"
+# point SRC to the discovery script dynamically
+SRC="$(pwd)/circuit-stability/code/src/experiments/circuit_discovery.py"
 
 python "$SRC" \
   "google/gemma-2-9b-it" \

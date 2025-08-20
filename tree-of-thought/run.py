@@ -40,7 +40,7 @@ def run(args):
 
 def parse_args():
     """
-    Each and every arg is worded out in JAKS/src/tree-of-thought-llm/README.md
+    Each and every arg is worded out in JAKS/src/tree-of-thought/README.md
 
     Returns:
         argparse.Namespace : all the CLI args passed 

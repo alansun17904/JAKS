@@ -25,6 +25,32 @@ This repository contains research on circuit stability in neural networks, focus
 
 ## Requirements and Dependencies
 
+On runpod
+```bash
+git clone <this-repo>
+cd JAKS
+
+# for mac
+pip install -r tree-of-thought/requirements.txt --extra-index-url https://download.pytorch.org/whl/nightly/cpu
+# for others
+pip install -r requirements.txt 
+
+pip install -e tree-of-thought
+
+# install transformerLens
+pip install git+https://github.com/TransformerLensOrg/TransformerLens
+
+```
+
+1. Get hugginface access token here: https://huggingface.co/settings/tokens (for gated models) (https://transformerlensorg.github.io/TransformerLens/content/getting_started.html)
+
+
+
+
+
+
+
+
 The circuit stability codebase relies on a `conda` environment whose dependencies are listed in `circuit-stability/notebooks-source/config/environment.yml`. Before installing this environment, you need to install `Graphviz` (required for circuit visualization). To make things easy, you can directly run 
 
 ```bash

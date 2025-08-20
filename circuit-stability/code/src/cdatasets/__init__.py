@@ -18,15 +18,7 @@ Available prompting strategies:
 - chain-of-thought: Step-by-step reasoning
 """
 
-from .arith_dataset import ArithDataset
-from .bool_dataset import BooleanDataset
-from .csense_dataset import CommonSenseDataset
-from .dyck_dataset import DyckDataset
-from .date_dataset import DateDataset
-from .sports_dataset import SportsDataset
-from .movie_dataset import MovieDataset
 from .custom_dataset import CustomDataset
-from .prompt_dataaset import PromptDataset
 from .prompts import PromptFormatter, ZeroShot, FewShot, ChainOfThought
 
 
@@ -55,13 +47,6 @@ class DatasetBuilder:
     
     # Registry of available dataset classes
     ids = {
-        "arith": ArithDataset,
-        "bool": BooleanDataset,
-        "csense": CommonSenseDataset,
-        "dyck": DyckDataset,
-        "date": DateDataset,
-        "sports": SportsDataset,
-        "movie": MovieDataset,
         "custom": CustomDataset,
     }
 

@@ -12,7 +12,7 @@
 
 ```bash
 git clone https://github.com/princeton-nlp/tree-of-thought-llm
-cd tree-of-thought-llm
+cd tree-of-thought
 # for mac use 
 pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/nightly/cpu
 # for others

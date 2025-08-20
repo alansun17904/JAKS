@@ -9,7 +9,10 @@
 #    --n_select_sample 5 \
 #    ${@}
 
-python run.py \
+export PYTHONPATH="$(pwd)/tree-of-thought:${PYTHONPATH:-}"
+
+
+python tree-of-thought/run.py \
       --backend gpt2 \
       --task game24  \
       --method_generate propose \
