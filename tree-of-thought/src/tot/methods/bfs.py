@@ -230,7 +230,6 @@ def solve(args, task, idx, to_print=True):
         
         #TODO: Circuit selection goes here
 
-        quit()
 
 
         # evaluation method
