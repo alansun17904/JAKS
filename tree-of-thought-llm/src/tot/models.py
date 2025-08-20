@@ -4,7 +4,9 @@ Provides wrappers for OpenAI's ChatCompletion API with backoff, token/cost track
 
 import os
 import openai
-import backoff 
+import backoff
+
+from .t_lens_generate import get_tlens_model
 
 completion_tokens = prompt_tokens = 0
 
@@ -26,7 +28,15 @@ def completions_with_backoff(**kwargs):
     # just tries to hit API again if error occurs using exponential backoff 
     return openai.ChatCompletion.create(**kwargs)
 
-def gpt(prompt, model="gpt-4", temperature=0.7, max_tokens=1000, n=1, stop=None) -> list:
+def gpt(prompt,
+        model="gpt2",
+        temperature=0.7,
+        max_tokens=50,
+        n=1,
+        stop=None,
+        json = None,
+        x = None,
+        proposals = False) -> list:
     """
     Generate completions from a prompt using OpenAI's chat models.
     Args:
@@ -39,6 +49,38 @@ def gpt(prompt, model="gpt-4", temperature=0.7, max_tokens=1000, n=1, stop=None)
     Returns:
         list: List of generated completions (strings).
     """
+    # Check if model is gpt-2
+    if model.lower() not in ['gpt-3.5-turbo', 'gpt-4o']:
+        outputs = []
+        print(model)
+        # Lazy import so that it only initiates once
+        t_lens = get_tlens_model(model_id = model)
+        # generate variations using hf_models
+        while n > 0: # n is the number of generations we want, each generation has x variations
+            raw_output_text = t_lens.generate(prompt,  # TODO maybe make the prompt look like messages below
+                                          temperature=temperature,
+                                          max_tokens=max_tokens,
+                                          )
+            n -= 1
+            #print(f"To debug:raw output {raw_output_text}")
+
+
+            if proposals:
+                # Put raw output into json
+                json[x]["raw_output_prop"].append(raw_output_text)
+
+                # If we look at the prompt anything after 'Possible next steps:' are variations
+                variation = raw_output_text.strip().split("Possible next steps:")[-1]
+                # append everything except the last line, bc the stop rn is no.of token; so not guaranteed that last variation is complete
+                outputs.append(variation.split("\n")[:-1])
+
+            if not proposals:
+                #json[x]["raw_output_eval"].append(raw_output_text)
+                print(raw_output_text)
+                outputs.append(raw_output_text)
+            #print(f"To debug: {outputs}")
+        return outputs
+    
     messages = [{"role": "user", "content": prompt}]
     return chatgpt(messages, model=model, temperature=temperature, max_tokens=max_tokens, n=n, stop=stop)
     
@@ -59,27 +101,17 @@ def chatgpt(messages, model="gpt-4", temperature=0.7, max_tokens=1000, n=1, stop
     global completion_tokens, prompt_tokens
     outputs = []
     while n > 0:
+        """
+        Since API call limits requests to 20 we batch it and send; eg :50 generations 
+        will run thrice each time subtracting 20 requests.
+        """
         cnt = min(n, 20)
         n -= cnt
+        # output a JSON object that for eg: "choices": [{"message": {"content": "output 1"}}, ...],
         res = completions_with_backoff(model=model, messages=messages, temperature=temperature, max_tokens=max_tokens, n=cnt, stop=stop)
+        # appends the 'content' string from the 'JSON output' to the list
         outputs.extend([choice["message"]["content"] for choice in res["choices"]])
         # log completion tokens
         completion_tokens += res["usage"]["completion_tokens"]
         prompt_tokens += res["usage"]["prompt_tokens"]
     return outputs
-    
-def gpt_usage(backend="gpt-4"):
-    """
-    Returns the total token usage and estimated cost for the current session.
-    TODO we dont need this for our pipeline
-    Args:
-        backend (str): Model backend name ('gpt-4' or 'gpt-3.5-turbo').
-    Returns:
-        dict: {"completion_tokens": int, "prompt_tokens": int, "cost": float}
-    """
-    global completion_tokens, prompt_tokens
-    if backend == "gpt-4":
-        cost = completion_tokens / 1000 * 0.06 + prompt_tokens / 1000 * 0.03
-    elif backend == "gpt-3.5-turbo":
-        cost = (completion_tokens + prompt_tokens) / 1000 * 0.0002
-    return {"completion_tokens": completion_tokens, "prompt_tokens": prompt_tokens, "cost": cost}
