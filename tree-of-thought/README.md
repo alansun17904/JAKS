@@ -8,8 +8,11 @@
 ## Setup
 
 **After setting up the tot package**
-1. Create an `.env` file inside the `JAKS` folder 
-2. Create an `HF_TOKEN` variable and add your huggingface access token
+1. Use the following command and input your token for gated models only.
+```bash
+huggingface-cli login 
+```
+
 
 ## Quick Start To Run Locally For One Inference
 

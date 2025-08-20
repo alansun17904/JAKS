@@ -4,14 +4,14 @@ This script contains the LLM class, which loads and uses
 a Hugging Face Causal Language Model for text generation.
 """
 
-from dotenv import load_dotenv
+
+from pathlib import Path
+
 from transformer_lens import HookedTransformer
 
 import os
 import torch
 
-
-load_dotenv(dotenv_path="../.env")
 
 hf_token = os.getenv("HF_TOKEN")
 
@@ -51,13 +51,10 @@ class LLM():
             self.device = "cpu"
 
 
-        from dotenv import load_dotenv
-        load_dotenv("../../../.env")
+
         self.model = HookedTransformer.from_pretrained(
             model_id,
             device = self.device,
-            #token=os.getenv("HF_TOKEN")
-
         )
 
 

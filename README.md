@@ -23,10 +23,10 @@ This repository contains research on circuit stability in neural networks, focus
 ├──v1_circuit.png, v2_circuit.png  # Circuit visualization files
 ├── tree-of-thought
       ├── MANIFEST.in
-      ├── README.md
+      ├── README.md             # TOT specific README.md
       ├── pyproject.toml
-      ├── requirements.txt
-      ├── run.py
+      ├── requirements.txt      # TOT specific requirements.txt
+      ├── run.py                # Main entry point
       ├── scripts
       │    ├── crosswords
       │    ├── game24
