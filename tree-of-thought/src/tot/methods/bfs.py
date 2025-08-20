@@ -8,6 +8,7 @@ from functools import partial
 from tot.models import gpt
 import json
 from pathlib import Path
+import subprocess
 
 
 json_thought = {}
@@ -218,6 +219,18 @@ def solve(args, task, idx, to_print=True):
         print(f"To debug: flattened new_ys: {new_ys}")
 
         ids = list(range(len(new_ys)))
+
+        # TODO: Add additional cli args for circuit discovery as well
+        # TODO: Make this into a function and call the circuit_discovery script with params
+        # TODO: If above is done we have to change path too.
+        # Edit params at circuit-stability/code/src/scripts/naive_run.sh
+        subprocess.run(["bash", 
+                        "circuit-stability/code/src/scripts/naive_run.sh"],
+                        check=True)
+        
+        #TODO: Circuit selection goes here
+
+        quit()
 
 
         # evaluation method

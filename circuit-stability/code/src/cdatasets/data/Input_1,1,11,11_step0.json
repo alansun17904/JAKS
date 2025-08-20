@@ -1,0 +1,18 @@
+{
+    "1 1 11 11": {
+        "step": "0",
+        "Prompt": "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 1 1 11 11\nPossible next steps:\n",
+        "raw_output_prop": [
+            "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 1 1 11 11\nPossible next steps:\n1 + 1 = 2 (left: 2 11 11)\n11 / 1 = 11 (left: 1 11 11)\n11 + 1 = 1",
+            "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 1 1 11 11\nPossible next steps:\n11 + 1 = 12 (left: 1 12 11)\n11 - 1 = 10 (left: 1 10 11)\n11 / 1 ="
+        ],
+        "raw_output_eval": [],
+        "thought_variation": {
+            "": [],
+            "1 + 1 = 2 (left: 2 11 11)": [],
+            "11 / 1 = 11 (left: 1 11 11)": [],
+            "11 + 1 = 12 (left: 1 12 11)": [],
+            "11 - 1 = 10 (left: 1 10 11)": []
+        }
+    }
+}

@@ -13,7 +13,7 @@ export PYTHONPATH="$(pwd)/tree-of-thought:${PYTHONPATH:-}"
 
 
 python tree-of-thought/run.py \
-      --backend gpt2 \
+      --backend google/gemma-2-9b-it \
       --task game24  \
       --method_generate propose \
       --method_evaluate value \

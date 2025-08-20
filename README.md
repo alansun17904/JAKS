@@ -63,7 +63,8 @@ On runpod or mac you can also do.
 ```bash
 git clone <this-repo>
 cd JAKS
-
+python -m venv cs-venv
+source cs-venv/bin/activate
 bash install.sh
 ```
 
