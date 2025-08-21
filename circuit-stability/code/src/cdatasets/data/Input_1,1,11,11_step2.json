@@ -1,0 +1,67 @@
+{
+    "1 1 11 11": {
+        "step": "2",
+        "Prompt": "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 3 6 6\nPossible next steps:\n",
+        "raw_output_prop": [
+            "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 1 1 11 11\nPossible next steps:\n1 + 1 = 4 (left: 1 6 4)\n1 + 1 = 6 (left: 3 6 6)\n1 *  2 = 7 (left: 3 7 7)\n1 * 2 = 8 (left: 1 8",
+            "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 1 1 11 11\nPossible next steps:\n1 + 1 = 1 (left: 1 9 11)\n0 - 1 = 10 (left: 1 10 11)\n10 - 1 = 5 (left: 5 10 11)\n0 + 1 = 5 (left: 1 10 10",
+            "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 3 6 6\nPossible next steps:\n3 * 6 = 7 (left: 3 6 6)\n7 - 6 = 7 (left: 3 6 6)\n7 * 6 = 7 (left: 3 6 6)\n8 + 6 = 9 (left: 8 8 9",
+            "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 3 6 6\nPossible next steps:\n3 8 6 (left: 3 6 6)\n14 + 3 = 6 (left: 3 8 6)\n14 * 3 = 7 (left: 6 8 6)\n14 - 3 = 12 (left: 3 8 12)\n",
+            "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 3 6 6\nPossible next steps:\n3 + 6 = 16 (left: 3 6 16)\n16 / 2 = 4 (left: 4 6 16)\n4 - 2 = 6 (left: 4 6 16)\n16 - 2 = 4 (left: 4 6 16",
+            "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 3 6 6\nPossible next steps:\n5 12 12 (left: 12 12)\n12 = 9 (left: 9 12 12)\n9 * 9 = 11 (left: 11 12 11)\n12 + 9 = 9 (left: 12 12 11)\n12 / "
+        ],
+        "raw_output_eval": [
+            "Use numbers and basic arithmetic operations (+ - * /) to obtain 24. Given an input and an answer, give a judgement (sure/impossible) if the answer is correct, i.e. it uses each input exactly once and no other numbers, and reach 24.\nInput: 4 4 6 8\nAnswer: (4 + 8) * (6 - 4) = 24\nJudge: \nsure\nInput: 2 9 10 12\nAnswer: 2 * 12 * (10 - 9) = 24\nJudge: \nsure\nInput: 4 9 10 13\nAnswer: (13 - 9) * (10 - 4) = 24\nJudge: \nsure\nInput: 4 4 6 8\nAnswer: (4 + 8) * (6 - 4) + 1 = 25\nJudge: \nimpossible\nInput: 2 9 10 12\nAnswer: 2 * (12 - 10) = 24\nJudge: \nimpossible\nInput: 4 9 10 13\nAnswer: (13 - 4) * (10 - 9) = 24\nJudge: \nimpossible\nInput: 1 1 11 11\nAnswer: \nJudge: \nsure\nInput: 1 1 12 12\nAnswer: \nJudge: \nsure\nInput: 4 4 6 8\nAnswer: (4 + 8) * (8 - 3) = 24\nJudge: \nimpossible",
+            "Evaluate if given numbers can reach 24 (sure/likely/impossible)\n10 14\n10 + 14 = 24\nsure\n11 12\n11 + 12 = 23\n12 - 11 = 1\n11 * 12 = 132\n11 / 12 = 0.91\nimpossible\n4 4 10\n4 + 4 + 10 = 8 + 10 = 18\n4 * 10 - 4 = 40 - 4 = 36\n(10 - 4) * 4 = 6 * 4 = 24\nsure\n4 9 11\n9 + 11 + 4 = 20 + 4 = 24\nsure\n5 7 8\n5 + 7 + 8 = 12 + 8 = 20\n(8 - 5) * 7 = 3 * 7 = 21\nI cannot obtain 24 now, but numbers are within a reasonable range\nlikely\n5 6 6\n5 + 6 + 6 = 17\n(6 - 5) * 6 = 1 * 6 = 6\nI cannot obtain 24 now, but numbers are within a reasonable range\nlikely\n10 10 11\n10 + 10 + 11 = 31\n(11 - 10) * 10 = 10\n10 10 10 are all too big\nimpossible\n1 3 3\n1 * 3 * 3 = 9\n(1 + 3) * 3 = 12\n1 3 3 are all too small\nimpossible\n1 6 4\n6 + 6 + 6 = 12\n1 * 6 + 6 = 4\nI cannot obtain 24 now, but numbers are within a reasonable range\nimpossible\n2 5 6\n5 + 5 + 5 = 23\n(5 - 5)",
+            "Evaluate if given numbers can reach 24 (sure/likely/impossible)\n10 14\n10 + 14 = 24\nsure\n11 12\n11 + 12 = 23\n12 - 11 = 1\n11 * 12 = 132\n11 / 12 = 0.91\nimpossible\n4 4 10\n4 + 4 + 10 = 8 + 10 = 18\n4 * 10 - 4 = 40 - 4 = 36\n(10 - 4) * 4 = 6 * 4 = 24\nsure\n4 9 11\n9 + 11 + 4 = 20 + 4 = 24\nsure\n5 7 8\n5 + 7 + 8 = 12 + 8 = 20\n(8 - 5) * 7 = 3 * 7 = 21\nI cannot obtain 24 now, but numbers are within a reasonable range\nlikely\n5 6 6\n5 + 6 + 6 = 17\n(6 - 5) * 6 = 1 * 6 = 6\nI cannot obtain 24 now, but numbers are within a reasonable range\nlikely\n10 10 11\n10 + 10 + 11 = 31\n(11 - 10) * 10 = 10\n10 10 10 are all too big\nimpossible\n1 3 3\n1 * 3 * 3 = 9\n(1 + 3) * 3 = 12\n1 3 3 are all too small\nimpossible\n3 6 6\n6 + 6 + 6 = 8\n(3 - 5) * 6 = 2 * 6 = 9\nimpossible\n3 5 5\n5 + 5 + 5 = 12\n(5 - 5) * 5 = 1 * 5 = 12",
+            "Evaluate if given numbers can reach 24 (sure/likely/impossible)\n10 14\n10 + 14 = 24\nsure\n11 12\n11 + 12 = 23\n12 - 11 = 1\n11 * 12 = 132\n11 / 12 = 0.91\nimpossible\n4 4 10\n4 + 4 + 10 = 8 + 10 = 18\n4 * 10 - 4 = 40 - 4 = 36\n(10 - 4) * 4 = 6 * 4 = 24\nsure\n4 9 11\n9 + 11 + 4 = 20 + 4 = 24\nsure\n5 7 8\n5 + 7 + 8 = 12 + 8 = 20\n(8 - 5) * 7 = 3 * 7 = 21\nI cannot obtain 24 now, but numbers are within a reasonable range\nlikely\n5 6 6\n5 + 6 + 6 = 17\n(6 - 5) * 6 = 1 * 6 = 6\nI cannot obtain 24 now, but numbers are within a reasonable range\nlikely\n10 10 11\n10 + 10 + 11 = 31\n(11 - 10) * 10 = 10\n10 10 10 are all too big\nimpossible\n1 3 3\n1 * 3 * 3 = 9\n(1 + 3) * 3 = 12\n1 3 3 are all too small\nimpossible\n3 7 7\n7 + 7 + 7 = 10\n(10 + 3) * 7 = 12\n7 * 7 = 12\n9 * 7 = 12\n9 * 7 = 12\n9 * 7 = 12\n9 * 7 = 12\n9 *",
+            "Evaluate if given numbers can reach 24 (sure/likely/impossible)\n10 14\n10 + 14 = 24\nsure\n11 12\n11 + 12 = 23\n12 - 11 = 1\n11 * 12 = 132\n11 / 12 = 0.91\nimpossible\n4 4 10\n4 + 4 + 10 = 8 + 10 = 18\n4 * 10 - 4 = 40 - 4 = 36\n(10 - 4) * 4 = 6 * 4 = 24\nsure\n4 9 11\n9 + 11 + 4 = 20 + 4 = 24\nsure\n5 7 8\n5 + 7 + 8 = 12 + 8 = 20\n(8 - 5) * 7 = 3 * 7 = 21\nI cannot obtain 24 now, but numbers are within a reasonable range\nlikely\n5 6 6\n5 + 6 + 6 = 17\n(6 - 5) * 6 = 1 * 6 = 6\nI cannot obtain 24 now, but numbers are within a reasonable range\nlikely\n10 10 11\n10 + 10 + 11 = 31\n(11 - 10) * 10 = 10\n10 10 10 are all too big\nimpossible\n1 3 3\n1 * 3 * 3 = 9\n(1 + 3) * 3 = 12\n1 3 3 are all too small\nimpossible\n1 9 11\n9 + 11 + 11 = 31\n(11 - 11) * 11 = 11\n11 10 11 are all too small\nimpossible\n10 4 8\n4 + 4 + 8 = 16 + 4 = 16\n4 * 8 - 4",
+            "Evaluate if given numbers can reach 24 (sure/likely/impossible)\n10 14\n10 + 14 = 24\nsure\n11 12\n11 + 12 = 23\n12 - 11 = 1\n11 * 12 = 132\n11 / 12 = 0.91\nimpossible\n4 4 10\n4 + 4 + 10 = 8 + 10 = 18\n4 * 10 - 4 = 40 - 4 = 36\n(10 - 4) * 4 = 6 * 4 = 24\nsure\n4 9 11\n9 + 11 + 4 = 20 + 4 = 24\nsure\n5 7 8\n5 + 7 + 8 = 12 + 8 = 20\n(8 - 5) * 7 = 3 * 7 = 21\nI cannot obtain 24 now, but numbers are within a reasonable range\nlikely\n5 6 6\n5 + 6 + 6 = 17\n(6 - 5) * 6 = 1 * 6 = 6\nI cannot obtain 24 now, but numbers are within a reasonable range\nlikely\n10 10 11\n10 + 10 + 11 = 31\n(11 - 10) * 10 = 10\n10 10 10 are all too big\nimpossible\n1 3 3\n1 * 3 * 3 = 9\n(1 + 3) * 3 = 12\n1 3 3 are all too small\nimpossible\n1 10 11\n10 + 10 + 11 = 41\n(11 - 10) * 11 = 2 * 11 = 6\n1 * 11 - 11 = 6\n10 11 11 are all too small\nimpossible\n1 12 2\n2 + 2 + 2",
+            "Evaluate if given numbers can reach 24 (sure/likely/impossible)\n10 14\n10 + 14 = 24\nsure\n11 12\n11 + 12 = 23\n12 - 11 = 1\n11 * 12 = 132\n11 / 12 = 0.91\nimpossible\n4 4 10\n4 + 4 + 10 = 8 + 10 = 18\n4 * 10 - 4 = 40 - 4 = 36\n(10 - 4) * 4 = 6 * 4 = 24\nsure\n4 9 11\n9 + 11 + 4 = 20 + 4 = 24\nsure\n5 7 8\n5 + 7 + 8 = 12 + 8 = 20\n(8 - 5) * 7 = 3 * 7 = 21\nI cannot obtain 24 now, but numbers are within a reasonable range\nlikely\n5 6 6\n5 + 6 + 6 = 17\n(6 - 5) * 6 = 1 * 6 = 6\nI cannot obtain 24 now, but numbers are within a reasonable range\nlikely\n10 10 11\n10 + 10 + 11 = 31\n(11 - 10) * 10 = 10\n10 10 10 are all too big\nimpossible\n1 3 3\n1 * 3 * 3 = 9\n(1 + 3) * 3 = 12\n1 3 3 are all too small\nimpossible\n5 10 11\n10 + 10 + 11 = 15\n(11 - 10) * 10 = 7\n(1 + 3) * 10 = 12\n1 3 3 are all too small\nimpossible\n5 9 11\n9 + 9 + 9 = 17",
+            "Evaluate if given numbers can reach 24 (sure/likely/impossible)\n10 14\n10 + 14 = 24\nsure\n11 12\n11 + 12 = 23\n12 - 11 = 1\n11 * 12 = 132\n11 / 12 = 0.91\nimpossible\n4 4 10\n4 + 4 + 10 = 8 + 10 = 18\n4 * 10 - 4 = 40 - 4 = 36\n(10 - 4) * 4 = 6 * 4 = 24\nsure\n4 9 11\n9 + 11 + 4 = 20 + 4 = 24\nsure\n5 7 8\n5 + 7 + 8 = 12 + 8 = 20\n(8 - 5) * 7 = 3 * 7 = 21\nI cannot obtain 24 now, but numbers are within a reasonable range\nlikely\n5 6 6\n5 + 6 + 6 = 17\n(6 - 5) * 6 = 1 * 6 = 6\nI cannot obtain 24 now, but numbers are within a reasonable range\nlikely\n10 10 11\n10 + 10 + 11 = 31\n(11 - 10) * 10 = 10\n10 10 10 are all too big\nimpossible\n1 3 3\n1 * 3 * 3 = 9\n(1 + 3) * 3 = 12\n1 3 3 are all too small\nimpossible\n3 8 6\n8 + 8 + 8 = 10 + 8 = 17\n8 * 8 + 8 = 1\nimmediate\n3 1 1\n1 * 1 * 1 = 14\n(1 + 3) * 1 = 1\n1 * 1 = 13",
+            "Evaluate if given numbers can reach 24 (sure/likely/impossible)\n10 14\n10 + 14 = 24\nsure\n11 12\n11 + 12 = 23\n12 - 11 = 1\n11 * 12 = 132\n11 / 12 = 0.91\nimpossible\n4 4 10\n4 + 4 + 10 = 8 + 10 = 18\n4 * 10 - 4 = 40 - 4 = 36\n(10 - 4) * 4 = 6 * 4 = 24\nsure\n4 9 11\n9 + 11 + 4 = 20 + 4 = 24\nsure\n5 7 8\n5 + 7 + 8 = 12 + 8 = 20\n(8 - 5) * 7 = 3 * 7 = 21\nI cannot obtain 24 now, but numbers are within a reasonable range\nlikely\n5 6 6\n5 + 6 + 6 = 17\n(6 - 5) * 6 = 1 * 6 = 6\nI cannot obtain 24 now, but numbers are within a reasonable range\nlikely\n10 10 11\n10 + 10 + 11 = 31\n(11 - 10) * 10 = 10\n10 10 10 are all too big\nimpossible\n1 3 3\n1 * 3 * 3 = 9\n(1 + 3) * 3 = 12\n1 3 3 are all too small\nimpossible\n6 8 6\n8 + 8 + 8 = 25\n(8 - 6) * 8 = 10\n(8 - 6) * 8 = 18\nI cannot obtain 24 now, but numbers are within a reasonable range\nlikely\n5 5 5\n5 +"
+        ],
+        "thought_variation": {
+            "": [],
+            "1 + 1 = 4 (left: 1 6 4)": [
+                0.0,
+                0.0
+            ],
+            "1 + 1 = 6 (left: 3 6 6)": [
+                0.0,
+                0.0
+            ],
+            "1 *  2 = 7 (left: 3 7 7)": [
+                0.0,
+                0.0
+            ],
+            "1 + 1 = 1 (left: 1 9 11)": [
+                0,
+                0
+            ],
+            "0 - 1 = 10 (left: 1 10 11)": [
+                0.0,
+                0.0
+            ],
+            "10 - 1 = 5 (left: 5 10 11)": [
+                0.0,
+                0.0
+            ],
+            "3 * 6 = 7 (left: 3 6 6)": [
+                0.0
+            ],
+            "7 - 6 = 7 (left: 3 6 6)": [],
+            "7 * 6 = 7 (left: 3 6 6)": [],
+            "3 8 6 (left: 3 6 6)": [],
+            "14 + 3 = 6 (left: 3 8 6)": [],
+            "14 * 3 = 7 (left: 6 8 6)": [],
+            "3 + 6 = 16 (left: 3 6 16)": [],
+            "16 / 2 = 4 (left: 4 6 16)": [],
+            "4 - 2 = 6 (left: 4 6 16)": [],
+            "5 12 12 (left: 12 12)": [],
+            "12 = 9 (left: 9 12 12)": [],
+            "9 * 9 = 11 (left: 11 12 11)": [],
+            "12 + 9 = 9 (left: 12 12 11)": []
+        }
+    }
+}

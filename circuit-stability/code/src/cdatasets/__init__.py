@@ -19,6 +19,7 @@ Available prompting strategies:
 """
 
 from .custom_dataset import CustomDataset
+from .thoughts_dataset import  ThoughtDataset
 from .prompts import PromptFormatter, ZeroShot, FewShot, ChainOfThought
 
 
@@ -48,6 +49,7 @@ class DatasetBuilder:
     # Registry of available dataset classes
     ids = {
         "custom": CustomDataset,
+        "thought" : ThoughtDataset,
     }
 
     def __init__(self, name: str):

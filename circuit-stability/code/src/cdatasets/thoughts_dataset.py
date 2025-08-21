@@ -18,7 +18,7 @@ from .utils import generic_collate
 
 from torch.utils.data import DataLoader, Subset
 
-class CustomDataset(BaseDataset):
+class ThoughtDataset(BaseDataset):
     description = """You are solving the Game of 24. Given 4 numbers At each step, calculate the next best step"""
     data_file = "Input_1,1,11,11_step0.json"
 

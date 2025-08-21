@@ -7,11 +7,11 @@ export PYTHONPATH="$(pwd)/circuit-stability/code/src:${PYTHONPATH:-}"
 SRC="$(pwd)/circuit-stability/code/src/experiments/circuit_discovery.py"
 
 python "$SRC" \
-  "google/gemma-2-9b-it" \
+  "gpt2" \
   "output1" \
   --batch_size 1 \
   --ndevices 1 \
-  --device "cuda" \
+  --device "mps" \
   --seed 42 \
   --dataset custom \
   --format zero-shot \

@@ -38,7 +38,8 @@ def get_value(task, x, y, n_evaluate_sample, cache_value=True):
                         n=n_evaluate_sample,
                         stop=None,
                         json=json_thought,
-                        x=x,)
+                        x=x,
+                        proposals = False)
     # goes to /tot/tasks/{task}.py to get the respective tasks's unwrap methods
     value = task.value_outputs_unwrap(x, y, value_outputs)
     if cache_value:
@@ -67,24 +68,6 @@ def get_values(task, x, ys, n_evaluate_sample, cache_value=True):
             value = get_value(task, x, y, n_evaluate_sample, cache_value=cache_value)
             local_value_cache[y] = value
         values.append(value)
-    return values
-
-def get_votes(task, x, ys, n_evaluate_sample):
-    """
-    Use LLM to decide which is the most promising step given instructions and list of steps
-
-    Args:
-        task: The task object.
-        x: The input string.
-        ys: List of step ith variations.
-        n_evaluate_sample: number of times to ask the llm
-    Returns:
-        list: Vote-based value scores for each candidate output.
-    """
-    # vote_prompt_wrap is only present in task: /tot/tasks/text.py
-    vote_prompt = task.vote_prompt_wrap(x, ys)
-    vote_outputs = gpt(vote_prompt, n=n_evaluate_sample, stop=None)
-    values = task.vote_outputs_unwrap(vote_outputs, len(ys))
     return values
 
 def get_proposals(task, x, y): 
@@ -157,6 +140,17 @@ def thought_to_json(dictionary, filename):
         json.dump(dictionary, f, indent=4)
         f.write("\n")
 
+def get_circuit_scores(task, x, y):
+    """
+    This function is used to get the best scored thought based on its corresponding circuit metrics.
+    :param task:
+    :param x:
+    :param y:
+    :return:
+    """
+
+    return None
+
 def solve(args, task, idx, to_print=True):
     """
     Main BFS search loop for generating and selecting candidate solutions step by step.
@@ -203,15 +197,14 @@ def solve(args, task, idx, to_print=True):
         elif args.method_generate == 'propose':
             new_ys = [get_proposals(task, x, y) for y in ys]
 
-
         print(f"To debug: new_ys: {new_ys}")
 
         # the list of list for concurrent step's variation generation is a list of list
         json_thought[str(x)]["step"] = str(step)
 
         print(f"To debug: {json.dumps(json_thought, indent=4)}")
-        x = x.replace(" ", ",")
-        name = f"Input_{x}_step{step}"
+        _x = x.replace(" ", ",")
+        name = f"Input_{_x}_step{step}"
         thought_to_json(json_thought, f"{name}.json")
 
 
@@ -219,32 +212,35 @@ def solve(args, task, idx, to_print=True):
         print(f"To debug: flattened new_ys: {new_ys}")
 
         ids = list(range(len(new_ys)))
+        print(f"To debug: ids: {ids}")
 
         # TODO: Add additional cli args for circuit discovery as well
         # TODO: Make this into a function and call the circuit_discovery script with params
         # TODO: If above is done we have to change path too.
         # Edit params at circuit-stability/code/src/scripts/naive_run.sh
-        subprocess.run(["bash", 
-                        "circuit-stability/code/src/scripts/naive_run.sh"],
-                        check=True)
+
         
         #TODO: Circuit selection goes here
 
-
-
         # evaluation method
-        if args.method_evaluate == 'vote':
-            values = get_votes(task, x, new_ys, args.n_evaluate_sample)
+        if args.method_evaluate == 'circuits':
+            subprocess.run(["bash",
+                            "circuit-stability/code/src/scripts/naive_run.sh"],
+                           check=True)
+            values = get_circuit_scores(task, x, new_ys)
         elif args.method_evaluate == 'value':
             values = get_values(task, x, new_ys, args.n_evaluate_sample)
 
         #Append score for each variation TODO remove comment line to add each eval to each thought variation
-        """
         for elist, eval in zip(json_thought[str(x)]["thought_variation"].values(), values):
             elist.append(eval)
-        """
         # selection
         if args.method_select == 'sample':
+            print(f"To debug:Values {values}")
+            rng = np.random.default_rng(42)  # optional seed
+            n, lo, hi = len(values), 0.001, 20
+            values = list(rng.uniform(lo, hi, size=n))
+            print(f"To debug:Values {values}")
             ps = np.array(values) / sum(values)
             select_ids = np.random.choice(ids, size=args.n_select_sample, p=ps).tolist()
 
