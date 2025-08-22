@@ -13,7 +13,7 @@
 
 
 python tree-of-thought/run.py \
-      --backend gpt2 \
+      --backend google/gemma-2-9b-it \
       --task game24  \
       --method_generate propose \
       --method_evaluate value \
@@ -43,7 +43,7 @@ game24
 --method_generate
 propose
 --method_evaluate
-value
+value6 m
 --n_generate_sample
 2
 COMMENT
