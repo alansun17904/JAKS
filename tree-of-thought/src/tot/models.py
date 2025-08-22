@@ -3,12 +3,8 @@ Provides wrappers for OpenAI's ChatCompletion API with backoff, token/cost track
 """
 
 import os
-import openai
-import backoff
 
 from .t_lens_generate import get_tlens_model
-
-completion_tokens = prompt_tokens = 0
 
 def gpt(prompt,
         model="gpt2",
@@ -18,7 +14,8 @@ def gpt(prompt,
         stop=None,
         json = None,
         x = None,
-        proposals = False) -> list:
+        proposals = False,
+        task = None) -> list:
     """
     Generate completions from a prompt using OpenAI's chat models.
     Args:
@@ -31,6 +28,7 @@ def gpt(prompt,
     Returns:
         list: List of generated completions (strings).
     """
+    append_raw_output = False
     # Check if model is gpt-2
     if model.lower() not in ['gpt-3.5-turbo', 'gpt-4o']:
         outputs = []
@@ -46,18 +44,19 @@ def gpt(prompt,
             n -= 1
             #print(f"To debug:raw output {raw_output_text}")
 
-
             if proposals:
                 # Put raw output into json
-                json[x]["raw_output_prop"].append(raw_output_text)
-
+                if append_raw_output:
+                    json["raw_output_prop"].append(raw_output_text)
                 # If we look at the prompt anything after 'Possible next steps:' are variations
-                variation = raw_output_text.strip().split("Possible next steps:")[-1]
-                # append everything except the last line, bc the stop rn is no.of token; so not guaranteed that last variation is complete
-                outputs.append(variation.split("\n")[:-1])
+                if task == "Game24Task":
+                    variation = raw_output_text.strip().split("Possible next steps:")[-1]
+                    # append everything except the last line, bc the stop rn is no.of token; so not guaranteed that last variation is complete
+                    outputs.append(variation.split("\n")[:-1])
 
             if not proposals:
-                json[x]["raw_output_eval"].append(raw_output_text)
+                if append_raw_output:
+                    json[x]["raw_output_eval"].append(raw_output_text)
                 #print(raw_output_text)
                 outputs.append(raw_output_text)
             #print(f"To debug: {outputs}")

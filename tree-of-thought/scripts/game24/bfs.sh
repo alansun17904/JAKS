@@ -9,7 +9,7 @@
 #    --n_select_sample 1 \
 #    ${@}
 
-export PYTHONPATH="$(pwd)/tree-of-thought:${PYTHONPATH:-}"
+#export PYTHONPATH="$(pwd)/tree-of-thought:${PYTHONPATH:-}"
 
 
 python tree-of-thought/run.py \

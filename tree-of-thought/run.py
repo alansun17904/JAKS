@@ -6,7 +6,7 @@ devs note: If it is your first time please pick an example of game24 and loop th
 
 import argparse
 from tot.tasks import get_task
-from tot.methods.bfs import solve, naive_solve
+from tot.methods.bfs import solve
 
 def run(args):
     """
@@ -25,13 +25,8 @@ def run(args):
 
     # from the specified start_index to end_index
     for i in range(args.task_start_index, args.task_end_index):
-        if args.naive_run:
-            # just standard prompt and answer type generation
-            ys, info = naive_solve(args, task, i) 
-        else:
-            # the propose method uses this
+        if not args.naive_run:
             ys, info = solve(args, task, i)
-
 
         # log
         infos = [task.test_output(i, y) for y in ys]
@@ -54,10 +49,9 @@ def parse_args():
     args.add_argument('--task_end_index', type=int, default=1000)
 
     args.add_argument('--naive_run', action='store_true')
-    args.add_argument('--prompt_sample', type=str, choices=['standard', 'cot'])  # only used when method_generate = sample, or naive_run
 
-    args.add_argument('--method_generate', type=str, choices=['sample', 'propose'])
-    args.add_argument('--method_evaluate', type=str, choices=['value', 'vote'])
+    args.add_argument('--method_generate', type=str, default='propose')
+    args.add_argument('--method_evaluate', type=str, choices=['value', 'circuits'])
     args.add_argument('--method_select', type=str, choices=['sample', 'greedy'], default='greedy')
     args.add_argument('--n_generate_sample', type=int, default=1)  # only thing needed if naive_run
     args.add_argument('--n_evaluate_sample', type=int, default=1)

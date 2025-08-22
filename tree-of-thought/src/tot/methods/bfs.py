@@ -12,6 +12,8 @@ import subprocess
 
 
 json_thought = {}
+all_entries = []
+
 
 
 def get_value(task, x, y, n_evaluate_sample, cache_value=True):
@@ -37,7 +39,7 @@ def get_value(task, x, y, n_evaluate_sample, cache_value=True):
     value_outputs = gpt(value_prompt,
                         n=n_evaluate_sample,
                         stop=None,
-                        json=json_thought,
+                        json=thought_dict,
                         x=x,
                         proposals = False)
     # goes to /tot/tasks/{task}.py to get the respective tasks's unwrap methods
@@ -84,16 +86,17 @@ def get_proposals(task, x, y):
     # In /tot/tasks/{task}.py gets the respective method 
     propose_prompt = task.propose_prompt_wrap(x, y)
 
-    json_thought[str(x)]["Prompt"] = propose_prompt
+    thought_dict["Prompt"] = propose_prompt
 
-    print(json_thought)
+    print(thought_dict)
 
     # each line is a variation
     proposals = gpt(propose_prompt,
                     n=2, stop=None,
-                    json = json_thought,
+                    json = thought_dict,
                     x = x,
-                    proposals = True)
+                    proposals = True,
+                    task = type(task).__name__ )
 
     print(f"To debug: thought variations: {proposals}")
 
@@ -101,36 +104,12 @@ def get_proposals(task, x, y):
     proposals = list(itertools.chain(*proposals))  # this flattens it into a single list
 
     for proposal in proposals:
-        json_thought[str(x)]["thought_variation"][proposal] = []
+        thought_dict["thought_variation"][proposal] = []
 
-    #print(f"To debug: {json_thought}")
-
+    print(f"To debug: {thought_dict}")
 
     # store each variation in list along with previous variation
     return [y + _ + '\n' for _ in proposals]
-
-def get_samples(task, x, y, n_generate_sample, prompt_sample, stop):
-    """
-    Ask llm to directly answer the question using a standard prompt
-
-    Args:
-        task: The task object.
-        x: The input string.
-        y: The current output string (partial solution).
-        n_generate_sample: Number of samples to generate.
-        prompt_sample: Type of prompt ('standard' or 'cot').
-        stop: Stop token(s) for LLM generation.
-    Returns:
-        list: New candidate outputs as continuations of y.
-    """
-    if prompt_sample == 'standard':
-        prompt = task.standard_prompt_wrap(x, y)
-    elif prompt_sample == 'cot':
-        prompt = task.cot_prompt_wrap(x, y)
-    else:
-        raise ValueError(f'prompt_sample {prompt_sample} not recognized')
-    samples = gpt(prompt, n=n_generate_sample, stop=stop)
-    return [y + _ for _ in samples]
 
 ### adding a function for writing to json over here and calling it at the end of solve
 def thought_to_json(dictionary, filename):
@@ -168,6 +147,7 @@ def solve(args, task, idx, to_print=True):
     global gpt
     # make the json_thought object global
     global json_thought
+    global thought_dict
     # just adds these args without actually calling the function
     gpt = partial(gpt, model=args.backend, temperature=args.temperature)
     print(gpt)
@@ -176,40 +156,74 @@ def solve(args, task, idx, to_print=True):
     infos = []
 
     """
-    json_thought = { 'data entry': { 'step' : 'int',
-                                     'prompt' : 'int',
-                                     `raw_output` : `str`,
-                                     'thought_variation' : {variation : [score1 = heuristic, score2 = circuit stability]} }
-    """
+    SCHEMA FOR JSON
+[
+  {
+    "data_entry": "1 1 11 11",
+    "steps": [
+      {
+        "step": 0,
+        "prompt": 0,
+        "raw_output": "11 - 1 = 10 (left: 1 11 10)",
+        "thought_variation": {
+          "var1": { "heuristic": 0.82, "circuit_stability": 13.68 },
+          "var2": { "heuristic": 0.55, "circuit_stability": -7.90 }
+        }
+      },
+      {
+        "step": 1,
+        "prompt": 1,
+        "raw_output": "10 + 1 = 11 (left: 11 11)",
+        "thought_variation": {
+          "var1": { "heuristic": 0.73, "circuit_stability": 4.90 }
+        }
+      }
+    ]
+  },
+  {
+    "data_entry": "2 8 8 14",
+    "steps": [
+      {
+        "step": 0,
+        "prompt": 0,
+        "raw_output": "2 + 8 = 10 (left: 8 10 14)",
+        "thought_variation": {
+          "var1": { "heuristic": 0.90, "circuit_stability": 4.12 }
+        }
+      }
+    ]
+  }
+]
 
+    """
     # Structure of JSON object
-    json_thought[str(x)] = { "step" : "",
-                             "Prompt" : "",
-                             "raw_output_prop": [],
-                             "raw_output_eval": [],
-                             "thought_variation" : {"" : []}}
+    json_thought["data_entry"] = str(x)
+    json_thought["steps"] = []
 
     for step in range(task.steps): # each class instance has an attribute steps allowed to complete given task
-        # generation
-        if args.method_generate == 'sample':
-            new_ys = [get_samples(task, x, y, args.n_generate_sample, prompt_sample=args.prompt_sample, stop=task.stops[step]) for y in ys]
+        thought_dict = {}
+
+
+        thought_dict = {"step": step,
+                        "Prompt": None,
+                        "raw_output_prop": [],
+                        "raw_output_eval": [],
+                        "thought_variation": {}
+                        }
+
         # Ask model to propose variations of first step /tot/prompts/{task}.py propose_prompt
-        elif args.method_generate == 'propose':
+        if args.method_generate == 'propose':
             new_ys = [get_proposals(task, x, y) for y in ys]
 
-        print(f"To debug: new_ys: {new_ys}")
+        #print(f"To debug: new_ys: {new_ys}")
 
         # the list of list for concurrent step's variation generation is a list of list
-        json_thought[str(x)]["step"] = str(step)
 
-        print(f"To debug: {json.dumps(json_thought, indent=4)}")
-        _x = x.replace(" ", ",")
-        name = f"Input_{_x}_step{step}"
-        thought_to_json(json_thought, f"{name}.json")
 
+        print(f"To debug: {thought_dict}")
 
         new_ys = list(itertools.chain(*new_ys)) # this flattens it into a single list
-        print(f"To debug: flattened new_ys: {new_ys}")
+        #print(f"To debug: flattened new_ys: {new_ys}")
 
         ids = list(range(len(new_ys)))
         print(f"To debug: ids: {ids}")
@@ -220,7 +234,7 @@ def solve(args, task, idx, to_print=True):
         # Edit params at circuit-stability/code/src/scripts/naive_run.sh
 
         
-        #TODO: Circuit selection goes here
+        #TODO: Circuit selection goes inside the first if
 
         # evaluation method
         if args.method_evaluate == 'circuits':
@@ -231,9 +245,10 @@ def solve(args, task, idx, to_print=True):
         elif args.method_evaluate == 'value':
             values = get_values(task, x, new_ys, args.n_evaluate_sample)
 
-        #Append score for each variation TODO remove comment line to add each eval to each thought variation
-        for elist, eval in zip(json_thought[str(x)]["thought_variation"].values(), values):
+        #Append score for each variation
+        for elist, eval in zip(thought_dict["thought_variation"].values(), values):
             elist.append(eval)
+
         # selection
         if args.method_select == 'sample':
             print(f"To debug:Values {values}")
@@ -248,6 +263,7 @@ def solve(args, task, idx, to_print=True):
             # sorted based on values
             select_ids = sorted(ids, key=lambda x: values[x], reverse=True)[:args.n_select_sample]
         select_new_ys = [new_ys[select_id] for select_id in select_ids]
+        print(f"To Debug: New selected{select_new_ys}")
 
         # log
         if to_print: 
@@ -257,27 +273,13 @@ def solve(args, task, idx, to_print=True):
         infos.append({'step': step, 'x': x, 'ys': ys, 'new_ys': new_ys, 'values': values, 'select_new_ys': select_new_ys})
         ys = select_new_ys
 
+        # Append each thought's data to the json
+        json_thought["steps"].append(thought_dict)
 
+    name = json_thought["data_entry"].replace(" ", ",")
+    thought_to_json(json_thought, f'{name}.json')
     
     if to_print: 
         print(ys)
     return ys, {'steps': infos}
 
-def naive_solve(args, task, idx, to_print=True):
-    """
-    Simpler baseline: generate samples in one shot without iterative search or evaluation.
-
-    Args:
-        args: Namespace of arguments controlling the search.
-        task: The task object.
-        idx: Index of the input to solve.
-        to_print: Whether to print intermediate results.
-    Returns:
-        tuple: (final candidate outputs, empty log dictionary)
-    """
-    global gpt
-    gpt = partial(gpt, model=args.backend, temperature=args.temperature)
-    print(gpt)
-    x = task.get_input(idx)  # input
-    ys = get_samples(task, x, '', args.n_generate_sample, args.prompt_sample, stop=None)
-    return ys, {}
