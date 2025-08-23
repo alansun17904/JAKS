@@ -14,8 +14,6 @@ import subprocess
 json_thought = {}
 all_entries = []
 
-
-
 def get_value(task, x, y, n_evaluate_sample, cache_value=True):
     """
     To ask the llm how well the current step is on the scale of (sure/maybe/impossible)
@@ -232,9 +230,14 @@ def solve(args, task, idx, to_print=True):
         # TODO: Make this into a function and call the circuit_discovery script with params
         # TODO: If above is done we have to change path too.
         # Edit params at circuit-stability/code/src/scripts/naive_run.sh
-
-        
         #TODO: Circuit selection goes inside the first if
+
+        # Append each thought's data to the json
+        json_thought["steps"].append(thought_dict)
+
+        name = json_thought["data_entry"].replace(" ", ",")
+        thought_to_json(json_thought, f'{name}.json')
+
 
         # evaluation method
         if args.method_evaluate == 'circuits':
@@ -273,11 +276,10 @@ def solve(args, task, idx, to_print=True):
         infos.append({'step': step, 'x': x, 'ys': ys, 'new_ys': new_ys, 'values': values, 'select_new_ys': select_new_ys})
         ys = select_new_ys
 
-        # Append each thought's data to the json
-        json_thought["steps"].append(thought_dict)
 
-    name = json_thought["data_entry"].replace(" ", ",")
-    thought_to_json(json_thought, f'{name}.json')
+
+    #name = json_thought["data_entry"].replace(" ", ",")
+    #thought_to_json(json_thought, f'{name}.json')
     
     if to_print: 
         print(ys)

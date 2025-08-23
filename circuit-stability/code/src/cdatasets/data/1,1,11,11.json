@@ -10,108 +10,39 @@
                 "": [
                     0.0
                 ],
-                "1 1 11 - 12 = 9 (left: 8 8 13)": [
-                    0.001
-                ],
-                "12 / 2 = 3 (left: 3 8 13)": [
+                "1 + 1 = 12": [
                     0.0
                 ],
-                "3 - 2 = 5 (left: 3 8 13)": [
+                "12 * 10 = 7 (left: 12 12 12)": [
                     0.0
                 ],
-                "11 + 2 + 4 = 7 (left: 7 11 11)": [
+                "12 -  2 = 7 (left: 12 12 12)": [
+                    0.0
+                ],
+                "12 - 2 = 16 (left: 12 12 16)": [
+                    0.0
+                ],
+                "1 + 1 = 4 (left: 1 11 11)": [
                     0
                 ],
-                "11 - 2 = 12 (left: 8 11 12)": [
+                "11 *  1 = 8 (left: 1 11 11)": [
                     0.0
                 ],
-                "12 + 2 = 9 (left: 8 11 12)": [
+                "11 + 2 = 9 (left: 11 9 11)": [
                     0.0
                 ]
             }
         },
         {
             "step": 1,
-            "Prompt": "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 8 11 12\nPossible next steps:\n",
+            "Prompt": "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 12 12 12\nPossible next steps:\n",
             "raw_output_prop": [],
             "raw_output_eval": [],
             "thought_variation": {
-                "": [
-                    0.0
-                ],
-                "12 + 32 = 16 (left: 8 8 16)": [
-                    0.0
-                ],
-                "16 - 32 = 32 (left: 8 8 32)": [
-                    0.0
-                ],
-                "16 * 8 = 32 (left: 8 8 32)": [
-                    0.0
-                ],
-                "8 + 5 = 2 (left: 8 5 9)": [
-                    0
-                ],
-                "8 / 5 = 4 (left: 4 8 9)": [
-                    0.0
-                ],
-                "8 / 5 = 4 (left: 8 5 9)": [
-                    0.0
-                ]
-            }
-        },
-        {
-            "step": 2,
-            "Prompt": "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 8 8 32\nPossible next steps:\n",
-            "raw_output_prop": [],
-            "raw_output_eval": [],
-            "thought_variation": {
-                "": [
-                    0.0
-                ],
-                "12 + 2 = 12 (left: 8 8 12)": [
-                    0.0
-                ],
-                "12 / 2 = 7 (left: 12 8 7)": [
-                    0.0
-                ],
-                "12 * 8 = 12 (left: 12 8 7)": [
-                    0.0
-                ],
-                "1 - 20 = 11 (left: 20 11)": [
-                    0
-                ],
-                "1 + 20 = 4 (left: 4 21 11)": [
-                    0.0
-                ],
-                "21 + 20 = 11 (left: 20 21 11)": [
-                    0.0
-                ]
-            }
-        },
-        {
-            "step": 3,
-            "Prompt": "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 8 8 32\nPossible next steps:\n",
-            "raw_output_prop": [],
-            "raw_output_eval": [],
-            "thought_variation": {
-                "": [
-                    0.0
-                ],
-                "8 & 2 = 7 (left: 8 8 32)": [
-                    0.0
-                ],
-                "8 / 2 = 4 (left: 4 8 32)": [
-                    0
-                ],
-                "4 / 2 = 12 (left: 8 8 12)": [
-                    0.0
-                ],
-                "8 / 2 = 8 (left: 8 8 8)": [
-                    0
-                ],
-                "8 / 2 = 10 (left: 8 8 10)": [
-                    0
-                ]
+                "": [],
+                "12 - 12 = 9 (left: 9 12)": [],
+                "9 / 2 = 14 (left: 9 12)": [],
+                "14 - 9 = 14 (left: 12 12)": []
             }
         }
     ]

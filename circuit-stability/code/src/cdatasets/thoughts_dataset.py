@@ -20,7 +20,7 @@ from torch.utils.data import DataLoader, Subset
 
 class ThoughtDataset(BaseDataset):
     description = """You are solving the Game of 24. Given 4 numbers At each step, calculate the next best step"""
-    data_file = "1,1,11,11.json"
+    data_file = "PLEASE FILL IT IN ACCORDINGLY"
 
     def __init__(self, n=5, append_ans=True):
         super().__init__()
