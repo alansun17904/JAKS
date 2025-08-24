@@ -1,0 +1,107 @@
+{
+    "data_entry": "1 1 4 6",
+    "steps": [
+        {
+            "step": 0,
+            "Prompt": "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 1 1 4 6\nPossible next steps:\n",
+            "raw_output_prop": [],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "": [
+                    0.0
+                ],
+                "2 2 4 7": [
+                    0.0
+                ],
+                "8 + 8 = 4 (left: 8 8 4 7)": [
+                    0.0
+                ],
+                "8 - 2 = 6 (left: 8 8 6 6)": [
+                    0.0
+                ],
+                "8 + 8 = 6 (left: 2 6 6 6)": [
+                    0.0
+                ],
+                "1 + 8 = 3 (left: 2 4 6)": [
+                    0
+                ],
+                "3 / 2 = 8 (left: 3 4 6)": [
+                    0.0
+                ],
+                "14 + 2 = 16 (left: 3 4 6)": [
+                    0.0
+                ]
+            }
+        },
+        {
+            "step": 1,
+            "Prompt": "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: \nPossible next steps:\n",
+            "raw_output_prop": [],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "": [
+                    0.0
+                ],
+                "+7 = 12 (left: 6 11 10)+12 = 6 (left: 12 8 11 10)": [
+                    0.0
+                ],
+                "16 + 8 = 8": [
+                    0
+                ],
+                "2 = 7 (left: 7 8 7)": [
+                    0.0
+                ],
+                "7 / 8 = 11 (left: 8 8 11)": [
+                    0.0
+                ],
+                "11 + 8 = 11 (left: 8 8 11)": [
+                    0.0
+                ]
+            }
+        },
+        {
+            "step": 2,
+            "Prompt": "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: \nPossible next steps:\n",
+            "raw_output_prop": [],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "": [
+                    0.0
+                ],
+                "2 * 7 = 4.5 (left: 2 6 8 13)": [
+                    0.0
+                ],
+                "4 * 4 = 4.5 (left: 2 6 8 13)": [
+                    0.0
+                ],
+                "4 / 5 = 4.5 (left: 2 6 8 13)": [
+                    0.0
+                ],
+                "15 + 8 = 16 - 8 (left: 16 16 16)": [
+                    0
+                ],
+                "16 * 8 = 16 - 16 (left: 16 16 16)": [
+                    0.0
+                ],
+                "16 * 12 = 16 (left: 12 12 16)": [
+                    0.0
+                ]
+            }
+        },
+        {
+            "step": 3,
+            "Prompt": "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: \nPossible next steps:\n",
+            "raw_output_prop": [],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "": [],
+                "12 - 8 = 9 (left: 9 8 9)": [],
+                "9 - 8 = 10 (left: 10 8 10)": [],
+                "10 - 8 = 10 (left: 9 8 10)": [],
+                "1 + 8 = 12 (left: 1 8 12)": [],
+                "12 /  = 3 (left: 2 6 8)": [],
+                "12 /  = 3 (left: 1 6 8)": []
+            }
+        }
+    ]
+}
