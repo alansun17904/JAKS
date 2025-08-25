@@ -10,7 +10,6 @@ import json
 from pathlib import Path
 import subprocess
 
-
 json_thought = {}
 all_entries = []
 
@@ -241,6 +240,7 @@ def solve(args, task, idx, to_print=True):
 
         # evaluation method
         if args.method_evaluate == 'circuits':
+
             subprocess.run(["bash",
                             "circuit-stability/code/src/scripts/naive_run.sh"],
                            check=True)
@@ -248,17 +248,22 @@ def solve(args, task, idx, to_print=True):
         elif args.method_evaluate == 'value':
             values = get_values(task, x, new_ys, args.n_evaluate_sample)
 
+        ### TODO: ASSIGNING RANDOM VALUES SO THAT WE HAVE THE PIPELINE RUNNING
+        ### TODO: HAVE TO REMOVE IN FINAL
+        print(f"To debug:Values {values}")
+        rng = np.random.default_rng(42)  # optional seed
+        n, lo, hi = len(values), 0.001, 20
+        values = list(rng.uniform(lo, hi, size=n))
+        print(f"To debug:Values {values}")
+
+
         #Append score for each variation
         for elist, eval in zip(thought_dict["thought_variation"].values(), values):
             elist.append(eval)
 
         # selection
         if args.method_select == 'sample':
-            print(f"To debug:Values {values}")
-            rng = np.random.default_rng(42)  # optional seed
-            n, lo, hi = len(values), 0.001, 20
-            values = list(rng.uniform(lo, hi, size=n))
-            print(f"To debug:Values {values}")
+
             ps = np.array(values) / sum(values)
             select_ids = np.random.choice(ids, size=args.n_select_sample, p=ps).tolist()
 
