@@ -4,6 +4,7 @@ import pickle
 import random
 import argparse
 import torch
+import json
 from functools import partial
 
 from cdatasets import DatasetBuilder, PromptFormatter
@@ -86,9 +87,14 @@ def main():
         dataloader = dataset.to_dataloader(model, opts.batch_size, indices=[i])
         
         for batch in dataloader:
+            print(f"[DEBUG] Batch size: {len(batch)}")
             for idx, item in enumerate(batch):
-                print(f"index: {idx} and the len of tuple is {len(item)}")
-                print(f"{[type(x) for x in item]}")
+                print(f"[DEBUG] Item {idx}: len={len(item)}, types={[type(x) for x in item]}")
+                if len(item) >= 3 and hasattr(item[0], 'shape'):
+                    print(f"[DEBUG] Input tokens shape: {item[0].shape}")
+                    print(f"[DEBUG] First few tokens: {item[0][0][:10] if len(item[0].shape) > 1 else item[0][:10]}")
+                if len(item) >= 2:
+                    print(f"[DEBUG] Clean/corrupted comparison available: {type(item[0])}, {type(item[1])}")
         
         # Print batch size info
         print(f"Batch size: {opts.batch_size}")
@@ -103,17 +109,54 @@ def main():
         metric = extraction_schema(extraction, model)(pure_metric)
 
         g = Graph.from_model(model)
+        print(f"[DEBUG] Initial graph has {len(g.nodes)} nodes and {len(g.edges)} edges")
+        
         attribute(model, g, dataloader, metric, method="EAP-IG", ig_steps=opts.ig_steps)
+        
+        # Count edges in graph
+        edges_in_graph = sum(1 for e in g.edges.values() if e.in_graph)
+        print(f"[DEBUG] After attribution: {edges_in_graph} edges in graph")
+        
+        # Check edge scores
+        scored_edges = [e for e in g.edges.values() if e.score is not None]
+        if scored_edges:
+            scores = [e.score for e in scored_edges]
+            print(f"[DEBUG] Edge scores: min={min(scores):.4f}, max={max(scores):.4f}, mean={sum(scores)/len(scores):.4f}")
+        else:
+            print("[DEBUG] No edges have scores assigned")
+        
         g.apply_topn(200, absolute=False)
+        edges_in_graph_after_topn = sum(1 for e in g.edges.values() if e.in_graph)
+        print(f"[DEBUG] After topn: {edges_in_graph_after_topn} edges in graph")
+        
         g.to_json(f"{i//n_thoughts}_th_thought_{i}_th_variation.png.json")
         g.prune_dead_nodes()
+        
+        active_nodes = sum(1 for n in g.nodes.values() if n.in_graph)
+        print(f"[DEBUG] After pruning: {active_nodes} active nodes")
 
+        print(f"[DEBUG] Starting evaluation...")
         baseline = evaluate_baseline(model, dataloader, metric)
+        print(f"[DEBUG] Baseline loss: {baseline.mean().item():.4f}")
+        
         results = evaluate_graph(model, g, dataloader, metric)
+        print(f"[DEBUG] Circuit results: {results.mean().item():.4f}")
 
         diff = (results - baseline).mean().item()
+        print(f"[DEBUG] Circuit loss difference: {diff:.4f}")
 
         print(f"The circuit incurred extra {diff} loss.")
+        
+        # Save the circuit stability score to a file for ToT to read
+        score_data = {
+            "variation_index": i,
+            "circuit_loss": diff,
+            "baseline_loss": baseline.mean().item(),
+            "circuit_results": results.mean().item()
+        }
+        
+        with open(f"{i//n_thoughts}_th_thought_{i}_th_variation_score.json", "w") as f:
+            json.dump(score_data, f)
 
         gz = g.to_graphviz()
         gz.draw(f"{i//n_thoughts}_th_thought_{i}_th_variation.png", prog="dot")

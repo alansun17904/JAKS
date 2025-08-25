@@ -1,0 +1,28 @@
+{
+  "data_entry": "1 1 4 6",
+  "steps": [
+    {
+      "step": 0,
+      "Prompt": "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\nInput: 1 1 4 6\nPossible next steps:\n",
+      "raw_output_prop": [],
+      "raw_output_eval": [],
+      "thought_variation": {
+        "1 + 1 = 2 (left: 2 4 6)": [
+          0.9
+        ],
+        "1 * 4 = 4 (left: 1 4 6)": [
+          0.7
+        ],
+        "4 + 6 = 10 (left: 1 1 10)": [
+          0.8
+        ],
+        "6 - 4 = 2 (left: 1 1 2)": [
+          0.6
+        ],
+        "1 + 6 = 7 (left: 1 4 7)": [
+          0.5
+        ]
+      }
+    }
+  ]
+}

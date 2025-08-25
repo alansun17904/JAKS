@@ -22,25 +22,104 @@ class CustomDataset(BaseDataset):
     description = """You are solving the Game of 24. Given 4 numbers At each step, calculate the next best step"""
     data_file = "custom.json"
 
-    def __init__(self, n=5, append_ans=True):
+    def __init__(self, data_file=None, n=5, append_ans=True):
         super().__init__()
-        #self.append_ans = append_ans
         self.n = n
         self._examples = []
         self._clean_examples = []
-        self._corrupted_examples =  []
+        self._corrupted_examples = []
         self._labels = []
-        manual_mode = False
+        
+        # Load data from file if specified
+        if data_file:
+            self.load_data(data_file)
+        else:
+            # Create simple arithmetic examples for circuit analysis
+            self.create_arithmetic_examples()
 
-        # Manual single-example mode
-        if manual_mode:
-            clean_str = "John and mary went together. John gave the book to" 
-            label_str = "Mary"
-            corrupted_str = "John and mary went together. Mary gave the book to"
-            self._examples = [{"input": clean_str, "target": label_str}]
-            self._clean_examples = [clean_str]
-            self._corrupted_examples = [corrupted_str if corrupted_str else clean_str]
-            self._labels = [label_str]
+    def load_data(self, filename):
+        """Load data from JSON file in the data directory"""
+        data_path = Path(__file__).parent / "data" / filename
+        try:
+            with open(data_path, 'r') as f:
+                data = json.load(f)
+            
+            # Handle ToT data structure with data_entry and steps
+            if isinstance(data, dict) and "data_entry" in data and "steps" in data:
+                self.load_tot_data(data)
+                return
+                
+            # Handle nested list structure from test.json
+            if isinstance(data, list) and len(data) > 0 and isinstance(data[0], list):
+                # Flatten the nested structure
+                examples = []
+                for group in data:
+                    examples.extend(group)
+                data = examples
+            
+            for item in data[:self.n]:  # Limit to n examples
+                if isinstance(item, dict) and "Prompt" in item:
+                    prompt = item["Prompt"]
+                    # Extract target from the prompt (simple heuristic)
+                    target = "24"  # Default for Game of 24
+                    self._examples.append({"input": prompt, "target": target})
+                    self._clean_examples.append(prompt)
+                    self._corrupted_examples.append(prompt)
+                    self._labels.append(target)
+                    
+        except Exception as e:
+            print(f"Could not load {filename}: {e}")
+            self.create_arithmetic_examples()
+            
+    def load_tot_data(self, data):
+        """Load ToT-format data with thought variations"""
+        data_entry = data["data_entry"]
+        steps = data["steps"]
+        
+        # Process each step's thought variations
+        for step_data in steps:
+            step_num = step_data["step"]
+            prompt = step_data.get("Prompt", "")
+            thought_variations = step_data.get("thought_variation", {})
+            
+            # Create examples from thought variations
+            for variation_text, scores in thought_variations.items():
+                if variation_text.strip():  # Skip empty variations
+                    # Include the thought variation in the input so circuits can differentiate
+                    clean_input = prompt + variation_text
+                    
+                    # Create corrupted version with different wording/structure
+                    corrupted_prompt = prompt.replace("Input:", "Problem:").replace("Possible next steps:", "Available moves:")
+                    corrupted_input = corrupted_prompt + variation_text
+                    
+                    # Use a completion target (like "correct" or the next step)
+                    target = "correct"  # Simple binary target for now
+                    
+                    self._examples.append({
+                        "input": clean_input, 
+                        "target": target,
+                        "step": step_num,
+                        "variation": variation_text
+                    })
+                    self._clean_examples.append(clean_input)
+                    self._corrupted_examples.append(corrupted_input)
+                    self._labels.append(target)
+    
+    def create_arithmetic_examples(self):
+        """Create simple arithmetic examples for circuit analysis"""
+        examples = [
+            {"input": "2 + 3 =", "target": "5"},
+            {"input": "4 * 6 =", "target": "24"}, 
+            {"input": "8 - 3 =", "target": "5"},
+            {"input": "12 / 4 =", "target": "3"},
+            {"input": "7 + 8 =", "target": "15"}
+        ]
+        
+        for ex in examples[:self.n]:
+            self._examples.append(ex)
+            self._clean_examples.append(ex["input"])
+            self._corrupted_examples.append(ex["input"])
+            self._labels.append(ex["target"])
 
     @property
     def examples(self):
