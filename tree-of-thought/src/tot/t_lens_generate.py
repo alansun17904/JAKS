@@ -69,8 +69,8 @@ class LLM():
             input=prompt,
             max_new_tokens=max_tokens,
             do_sample=True,  # enable sampling
-            top_k=50,  # restrict to top 50 tokens
-            top_p=0.95,  # restrict to tokens covering 95% of prob mass
+            #top_k=50,  # restrict to top 50 tokens
+            #top_p=0.95,  # restrict to tokens covering 95% of prob mass
             temperature=temperature,  # control randomness
             return_type="str"  # return a string
         )

@@ -19,7 +19,7 @@ from .utils import generic_collate
 from torch.utils.data import DataLoader, Subset
 
 class ThoughtDataset(BaseDataset):
-    description = """You are solving the Game of 24. Given 4 numbers At each step, calculate the next best step"""
+    description = """You are solving the Game of 24"""
     data_file = "1,1,11,11.json"
 
     def __init__(self, n=5, append_ans=True):

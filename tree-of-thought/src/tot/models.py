@@ -31,7 +31,7 @@ def is_valid_step_line(line: str) -> bool:
 def gpt(prompt,
         model="gpt2",
         temperature=0.7,
-        max_tokens=1000,
+        max_tokens=250,
         n=1,
         stop=None,
         json = None,
