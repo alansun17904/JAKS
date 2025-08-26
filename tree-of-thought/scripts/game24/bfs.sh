@@ -1,5 +1,5 @@
 python tree-of-thought/run.py \
-      --backend gpt2 \
+      --backend google/gemma-2-9b-it \
       --task game24  \
       --method_generate propose \
       --method_evaluate circuits \
@@ -8,14 +8,14 @@ python tree-of-thought/run.py \
       --task_end_index 2 \
       --batch_size 1 \
       --ndevices 1 \
-      --device "mps" \
+      --device "cuda" \
       --seed 42 \
-      --dataset custom \
+      --dataset thought \
       --format zero-shot \
       --extraction tail
        "${@}"
 
-
+# google/gemma-2-9b-it
 
 : <<'COMMENT'
 --backend

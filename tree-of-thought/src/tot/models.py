@@ -9,7 +9,7 @@ from .t_lens_generate import get_tlens_model
 def gpt(prompt,
         model="gpt2",
         temperature=0.7,
-        max_tokens=50,
+        max_tokens=1000,
         n=1,
         stop=None,
         json = None,
