@@ -254,10 +254,7 @@ def solve(args, task, idx, to_print=True):
                           data_params = args.data_params,
                           format_params = args.format_params)
 
-            quit()
-            subprocess.run(["bash",
-                            "circuit_stability/code/src/scripts/naive_run.sh"],
-                           check=True)
+
             values = get_circuit_scores(task, x, new_ys)
         elif args.method_evaluate == 'value':
             values = get_values(task, x, new_ys, args.n_evaluate_sample)

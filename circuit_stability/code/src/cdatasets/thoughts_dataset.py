@@ -20,7 +20,7 @@ from torch.utils.data import DataLoader, Subset
 
 class ThoughtDataset(BaseDataset):
     description = """You are solving the Game of 24. Given 4 numbers At each step, calculate the next best step"""
-    data_file = "PLEASE FILL IT IN ACCORDINGLY"
+    data_file = "1,1,11,11.json"
 
     def __init__(self, n=5, append_ans=True):
         super().__init__()
@@ -55,15 +55,22 @@ class ThoughtDataset(BaseDataset):
             task = json.load(f)  # list[dict]
 
         self._examples = []
-        for ex in task:
-            single_input = ex["Input"].strip().replace("\n", "").replace("\t", "")
+        for ex in task["steps"]:
+            single_input = ex["Prompt"].strip().replace("\n", "").replace("\t", "")
+            for k, _v in ex["thought_variation"].items():
+                if k:
+                    final_input = single_input + k
+                    self._examples.append({"input": final_input, "target": ""})
+
+
             #for thoughts in ex["labels"]:
             #    combined = single_input + thoughts
             #    print(thoughts)
-            self._examples.append({"input": single_input, "target": ""})
+            
             #    print(self._examples)
         
-        print(self._examples)
+        print(f"All thoughts: {self._examples}")
+        quit()
 
         #random.shuffle(self._examples)
         #self._examples = self._examples[: self.n]
