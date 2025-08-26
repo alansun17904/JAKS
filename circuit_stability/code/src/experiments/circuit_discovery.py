@@ -65,8 +65,7 @@ def main(params):
     #opts = parse_args()
     opts = params
     seed_everything(opts.seed)
-    n_thoughts = 5
-    
+
     # Print device info
     device = opts.device
     print(f"Using device: {device}")
@@ -106,7 +105,7 @@ def main(params):
         g = Graph.from_model(model)
         attribute(model, g, dataloader, metric, method="EAP-IG", ig_steps=opts.ig_steps)
         g.apply_topn(200, absolute=False)
-        g.to_json(f"{i//n_thoughts}_th_thought_{i}_th_variation.png.json")
+        g.to_json(f"{i}_th_thought_{i}_th_variation.png.json")
         g.prune_dead_nodes()
 
         baseline = evaluate_baseline(model, dataloader, metric)
@@ -117,7 +116,7 @@ def main(params):
         print(f"The circuit incurred extra {diff} loss.")
 
         gz = g.to_graphviz()
-        gz.draw(f"{i//n_thoughts}_th_thought_{i}_th_variation.png", prog="dot")
+        gz.draw(f"{i}_th_thought_{i}_th_variation.png", prog="dot")
 
 
 
