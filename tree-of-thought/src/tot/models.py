@@ -6,6 +6,28 @@ import os
 
 from .t_lens_generate import get_tlens_model
 
+import re
+from typing import List
+
+# Regex: <int> <op> <int> = <int> (left: <n> [<n> [<n>]])
+LINE_RE = re.compile(
+    r'^\s*'                 # optional leading spaces
+    r'\d+\s*'               # first number
+    r'[+\-*/]\s*'           # operator
+    r'\d+\s*'               # second number
+    r'=\s*'                 # equals
+    r'\d+\s*'               # result
+    r'\(left:\s*'           # literal "(left:"
+    r'\d+(?:\s+\d+){0,2}\s*'  # 1 to 3 numbers separated by spaces
+    r'\)\s*$'               # closing ")"
+)
+
+def is_valid_step_line(line: str) -> bool:
+    """Return True if the line matches the required pattern."""
+    return bool(LINE_RE.match(line))
+
+
+
 def gpt(prompt,
         model="gpt2",
         temperature=0.7,
@@ -52,7 +74,9 @@ def gpt(prompt,
                 if task == "Game24Task":
                     variation = raw_output_text.strip().split("Possible next steps:")[-1]
                     # append everything except the last line, bc the stop rn is no.of token; so not guaranteed that last variation is complete
-                    outputs.append(variation.split("\n")[:-1])
+                    lines = variation.split("\n")[:-1]
+                    good_lines = [ln for ln in lines if is_valid_step_line(ln)]
+                    outputs.append(good_lines)
 
             if not proposals:
                 if append_raw_output:

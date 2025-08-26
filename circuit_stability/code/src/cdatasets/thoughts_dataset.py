@@ -95,11 +95,11 @@ class ThoughtDataset(BaseDataset):
 
         self._labels = [ex["target"] for ex in self._examples]  # <-- list of lists
         print(self._labels)
-        corrupted_prompt = "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 2 6 11 13\\nPossible next steps:\\n5 % 13 = ?! (left: 6 9 56)"
-        #self._corrupted_examples = self._clean_examples[:]
-        self._corrupted_examples = [corrupted_prompt] * len(self._clean_examples)
+        #corrupted_prompt = "Input: 2 8 8 14\\nPossible next steps:\\n2 + 8 = 10 (left: 8 10 14)\\n8 / 2 = 4 (left: 4 8 14)\\n14 + 2 = 16 (left: 8 8 16)\\n2 * 8 = 16 (left: 8 14 16)\\n8 - 2 = 6 (left: 6 8 14)\\n14 - 8 = 6 (left: 2 6 8)\\n14 /  2 = 7 (left: 7 8 8)\\n14 - 2 = 12 (left: 8 8 12)\\nInput: 2 6 11 13\\nPossible next steps:\\n5 % 13 = ?! (left: 6 9 56)"
+        self._corrupted_examples = self._clean_examples[:]
+        #self._corrupted_examples = [corrupted_prompt] * len(self._clean_examples)
 
-        #random.shuffle(self._corrupted_examples)
+        random.shuffle(self._corrupted_examples)
 
         Qs, As = [v["input"] for v in self._examples], [
             v["target"] for v in self._examples
