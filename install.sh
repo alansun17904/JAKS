@@ -3,8 +3,9 @@ set -euo pipefail
 
 # configurable bits
 TL_REF="${TL_REF:-v2.11.0}"  # TransformerLens tag/commit
-TOT_DIR="tree-of-thought"
-REQ_ENV_YML="${REQ_ENV_YML:-circuit-stability/notebooks-source/config/environment.yml}"
+TOT_DIR="${TOT_DIR:-tree-of-thought}"
+CS_DIR="${CS_DIR:-circuit_stability}"
+REQ_ENV_YML="${REQ_ENV_YML:-circuit_stability/notebooks-source/config/environment.yml}"
 
 # 0) system deps for pygraphviz (Linux/mac)
 OS="$(uname -s || true)"
@@ -20,7 +21,16 @@ python -m pip install --upgrade pip
 pip install pyyaml
 
 # 2) core python deps (same pins you used on runpod)
-pip install torch==2.4.1 transformers==4.44.2 pygraphviz==1.14
+pip install torch==2.4.1 transformers==4.44.2
+
+# 2b) pygraphviz (handle mac headers if needed)
+if [ "$OS" = "Darwin" ] && command -v brew >/dev/null 2>&1; then
+  export GRAPHVIZ_DIR="$(brew --prefix graphviz)"
+  export CFLAGS="${CFLAGS:-} -I$GRAPHVIZ_DIR/include"
+  export LDFLAGS="${LDFLAGS:-} -L$GRAPHVIZ_DIR/lib"
+fi
+# try wheel first; if it fails, build from source
+pip install pygraphviz==1.14 || pip install --no-binary=pygraphviz pygraphviz==1.14
 
 # 3) tree-of-thought: requirements + editable install
 if [ -d "$TOT_DIR" ]; then
@@ -36,10 +46,17 @@ else
   echo "⚠️  '$TOT_DIR' not found; skipping ToT install."
 fi
 
+# 3b) circuit_stability: editable install
+if [ -d "$CS_DIR" ]; then
+  pip install -e "$CS_DIR"
+else
+  echo "⚠️  '$CS_DIR' not found; skipping circuit_stability install."
+fi
+
 # 4) TransformerLens from Git (pin to tag/commit)
 pip install "git+https://github.com/TransformerLensOrg/TransformerLens@$TL_REF"
 
-# 5) optional extras from environment.yml
+# 5) optional extras from environment.yml (inside circuit_stability)
 if [ -f "$REQ_ENV_YML" ]; then
 python - <<PY
 import yaml, pathlib, os
@@ -67,5 +84,15 @@ try:
     print("TransformerLens OK")
 except Exception as e:
     print("TransformerLens import error:", e, file=sys.stderr)
+try:
+    import experiments
+    print("experiments import OK ->", experiments.__file__)
+except Exception as e:
+    print("experiments import error:", e, file=sys.stderr)
+try:
+    import circuit_stability as cs
+    print("circuit_stability import OK ->", cs.__file__)
+except Exception as e:
+    print("circuit_stability import error:", e, file=sys.stderr)
 print("✅ Environment ready")
 PY
