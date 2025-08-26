@@ -8,7 +8,7 @@ from functools import partial
 
 from cdatasets import DatasetBuilder, PromptFormatter
 from eap import Graph, attribute, evaluate_baseline, evaluate_graph
-from utils import (
+from .utils import (
     seed_everything,
     parse_key_value_pairs,
     make_dataset,
@@ -20,7 +20,7 @@ from utils import (
 import torch.nn.functional as F
 from transformer_lens import HookedTransformer
 
-
+"""
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("model_name", type=str, help="model")
@@ -59,10 +59,11 @@ def parse_args():
     args.data_params = parse_key_value_pairs(args.data_params)
     args.format_params = parse_key_value_pairs(args.format_params)
     return args
+"""
 
-
-def main():
-    opts = parse_args()
+def main(params):
+    #opts = parse_args()
+    opts = params
     seed_everything(opts.seed)
     n_thoughts = 5
     

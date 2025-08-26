@@ -10,6 +10,8 @@ import json
 from pathlib import Path
 import subprocess
 
+from experiments.circuit_discovery import main as circuit_discovery
+
 json_thought = {}
 all_entries = []
 
@@ -110,7 +112,7 @@ def get_proposals(task, x, y):
 
 ### adding a function for writing to json over here and calling it at the end of solve
 def thought_to_json(dictionary, filename):
-    p = Path("circuit-stability/code/src/cdatasets/data") / filename
+    p = Path("circuit_stability/code/src/cdatasets/data") / filename
     p.parent.mkdir(parents=True, exist_ok=True)
     with p.open("w") as f:
         json.dump(dictionary, f, indent=4)
@@ -228,7 +230,7 @@ def solve(args, task, idx, to_print=True):
         # TODO: Add additional cli args for circuit discovery as well
         # TODO: Make this into a function and call the circuit_discovery script with params
         # TODO: If above is done we have to change path too.
-        # Edit params at circuit-stability/code/src/scripts/naive_run.sh
+        # Edit params at circuit_stability/code/src/scripts/naive_run.sh
         #TODO: Circuit selection goes inside the first if
 
         # Append each thought's data to the json
@@ -237,12 +239,23 @@ def solve(args, task, idx, to_print=True):
         name = json_thought["data_entry"].replace(" ", ",")
         thought_to_json(json_thought, f'{name}.json')
 
-
+        params = { "model" : "gpt2",
+        "ofile" : None,
+        "batch_size" : 1,
+        "ndevices" : 1,
+        "device" : "cuda",
+        "seed" : 42,
+        "dataset" : "custom",
+        "format" : "zero-shot",
+        "extraction" : "last_token",
+        }
         # evaluation method
         if args.method_evaluate == 'circuits':
+            circuit_discovery(params)
+
 
             subprocess.run(["bash",
-                            "circuit-stability/code/src/scripts/naive_run.sh"],
+                            "circuit_stability/code/src/scripts/naive_run.sh"],
                            check=True)
             values = get_circuit_scores(task, x, new_ys)
         elif args.method_evaluate == 'value':

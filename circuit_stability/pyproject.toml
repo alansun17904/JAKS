@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "circuit-stability"
+version = "0.0.1"
+
+[tool.setuptools]
+package-dir = {"" = "code/src"}
+
+[tool.setuptools.packages.find]
+where = ["code/src"]
+include = ["experiments*", "eap*", "cdatasets*"]

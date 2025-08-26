@@ -75,7 +75,7 @@ The circuit stability codebase relies on a `conda` environment whose dependencie
 ```bash
 git clone <this-repo>
 cd JAKS
-cd circuit-stability/notebooks-source/config
+cd circuit_stability/notebooks-source/config
 ./install.sh
 conda activate ml
 ```
@@ -104,7 +104,7 @@ Download and install from [https://graphviz.org/download/](https://graphviz.org/
 
 2. **Create and activate the conda environment:**
    ```bash
-   conda env create -f circuit-stability/notebooks-source/config/environment.yml
+   conda env create -f circuit_stability/notebooks-source/config/environment.yml
    conda activate ml
    ```
 
@@ -132,7 +132,7 @@ pip install torch==2.4.1
 pip install transformers==4.44.2
 pip install transformer-lens==2.11.0
 pip install pygraphviz==1.14
-pip install -r <(conda env export -f circuit-stability/notebooks-source/config/environment.yml | grep "pip:" -A 1000 | tail -n +2 | sed 's/^      - //')
+pip install -r <(conda env export -f circuit_stability/notebooks-source/config/environment.yml | grep "pip:" -A 1000 | tail -n +2 | sed 's/^      - //')
 ```
 
 ### Computational Requirements
