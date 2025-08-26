@@ -70,7 +70,6 @@ class ThoughtDataset(BaseDataset):
             #    print(self._examples)
         
         print(f"All thoughts: {self._examples}")
-        quit()
 
         #random.shuffle(self._examples)
         #self._examples = self._examples[: self.n]
