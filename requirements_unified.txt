@@ -1,0 +1,59 @@
+# Tree-of-Thought + Circuit Stability Unified Requirements
+# This is the ONLY requirements file needed for the integrated system
+
+# Core ML Libraries
+torch==2.6
+transformers==4.51
+transformer-lens>=2.16.1
+numpy>=1.24.3
+pandas>=2.0.3
+
+# Visualization and Plotting
+matplotlib>=3.9.0
+# Note: pygraphviz optional - only needed for circuit visualization
+# pygraphviz>=1.11  # Commented out due to Graphviz system dependency
+
+# HTTP and API
+aiohttp==3.8.4
+aiosignal==1.3.1
+async-timeout==4.0.2
+requests>=2.32.2
+urllib3<2.0  # Fixed version for macOS compatibility
+openai==0.27.7
+huggingface_hub>=0.30.0
+
+# Data Processing
+attrs>=23.1.0
+backoff>=2.2.1
+certifi>=2023.5.7
+charset-normalizer>=3.1.0
+frozenlist>=1.3.3
+idna>=3.4
+multidict>=6.0.4
+yarl>=1.9.2
+tqdm>=4.66.3
+
+# Math and Scientific Computing  
+sympy>=1.13.1
+mpmath>=1.3.0
+
+# Environment and Configuration
+python-dotenv>=1.0.0
+pyyaml>=6.0.2
+packaging>=20.0
+typing-extensions>=4.15.0
+
+# Additional dependencies from transformer-lens
+accelerate>=1.10.0
+datasets>=4.0.0
+einops>=0.8.0
+jaxtyping>=0.2.0
+rich>=14.0.0
+safetensors>=0.6.0
+sentencepiece>=0.2.0
+beartype>=0.14.0
+wandb>=0.21.0
+
+# Development and Testing
+filelock>=3.19.0
+fsspec>=2025.3.0

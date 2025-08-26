@@ -7,7 +7,12 @@ import heapq
 import torch
 from transformer_lens import HookedTransformer, HookedTransformerConfig
 import numpy as np
-import pygraphviz as pgv
+try:
+    import pygraphviz as pgv
+    HAS_PYGRAPHVIZ = True
+except ImportError:
+    HAS_PYGRAPHVIZ = False
+    pgv = None
 
 from .visualization import EDGE_TYPE_COLORS, generate_random_color
 
@@ -697,11 +702,15 @@ class Graph:
         maximum_penwidth: float = 5.0,
         layout: str = "dot",
         seed: Optional[int] = None,
-    ) -> pgv.AGraph:
+    ):
         """
         Convert the graph to a pygraphviz graph object for visualization.
         Colorscheme: a cmap colorscheme
         """
+        if not HAS_PYGRAPHVIZ:
+            print("Warning: pygraphviz not installed, skipping visualization")
+            return None
+            
         g = pgv.AGraph(
             directed=True,
             bgcolor="white",

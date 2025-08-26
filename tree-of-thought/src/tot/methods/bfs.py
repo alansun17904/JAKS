@@ -111,7 +111,7 @@ def get_proposals(task, x, y):
 
 ### adding a function for writing to json over here and calling it at the end of solve
 def thought_to_json(dictionary, filename):
-    p = Path("circuit-stability/code/src/cdatasets/data") / filename
+    p = Path("../circuit-stability/code/src/cdatasets/data") / filename
     p.parent.mkdir(parents=True, exist_ok=True)
     with p.open("w") as f:
         json.dump(dictionary, f, indent=4)
@@ -314,7 +314,7 @@ def solve(args, task, idx, to_print=True):
             subprocess.run(["bash",
                             "circuit-stability/code/src/scripts/naive_run.sh",
                             "--data_params", f"data_file={name}.json"],
-                           check=True, cwd=".")
+                           check=True, cwd="..")
             values = get_circuit_scores(task, x, new_ys)
         elif args.method_evaluate == 'value':
             values = get_values(task, x, new_ys, args.n_evaluate_sample)

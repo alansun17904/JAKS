@@ -34,11 +34,13 @@ def make_hooks_and_matrices(
         The first set of hooks will add in the activations they are run on (run these on corrupted input), while the second set will subtract out the activations they are run on (run these on clean input).
         The third set of hooks will take in the gradients during the backwards pass and multiply it by the activation differences, adding this value in-place to the scores matrix that you passed in.
     """
+    # Disable pin_memory on MPS devices as it's not supported
+    pin_memory = not str(model.cfg.device).startswith('mps')
     activation_difference = torch.zeros(
         (batch_size, n_pos, graph.n_forward, model.cfg.d_model),
         dtype=model.cfg.dtype,
         device="cpu",
-        pin_memory=True,
+        pin_memory=pin_memory,
     )
 
     processed_attn_layers = set()

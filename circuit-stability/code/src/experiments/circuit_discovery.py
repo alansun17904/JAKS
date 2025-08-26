@@ -9,8 +9,8 @@ from functools import partial
 
 from cdatasets import DatasetBuilder, PromptFormatter
 from eap import Graph, attribute, evaluate_baseline, evaluate_graph
-from utils import (
-    seed_everything,
+from utils import seed_everything
+from experiments.utils import (
     parse_key_value_pairs,
     make_dataset,
     get_metric,
@@ -159,7 +159,10 @@ def main():
             json.dump(score_data, f)
 
         gz = g.to_graphviz()
-        gz.draw(f"{i//n_thoughts}_th_thought_{i}_th_variation.png", prog="dot")
+        if gz is not None:
+            gz.draw(f"{i//n_thoughts}_th_thought_{i}_th_variation.png", prog="dot")
+        else:
+            print(f"Skipping visualization for {i//n_thoughts}_th_thought_{i}_th_variation.png")
 
 
 

@@ -43,8 +43,10 @@ def evaluate_graph(
 
     # we construct the in_graph matrix, which is a binary matrix indicating which edges are in the circuit
     # we invert it so that we add in the corrupting activation differences for edges not in the circuit
+    # Use the same device as the model
+    device = model.cfg.device if hasattr(model.cfg, 'device') else 'cpu'
     in_graph_matrix = torch.zeros(
-        (graph.n_forward, graph.n_backward), device="cuda", dtype=model.cfg.dtype
+        (graph.n_forward, graph.n_backward), device=device, dtype=model.cfg.dtype
     )
     for edge in graph.edges.values():
         if edge.in_graph:
