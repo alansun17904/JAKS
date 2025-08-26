@@ -2,10 +2,17 @@ python tree-of-thought/run.py \
       --backend gpt2 \
       --task game24  \
       --method_generate propose \
-      --method_evaluate value \
+      --method_evaluate circuits \
       --method_select sample \
       --task_start_index 1 \
       --task_end_index 2 \
+      --batch_size 1 \
+      --ndevices 1 \
+      --device "mps" \
+      --seed 42 \
+      --dataset custom \
+      --format zero-shot \
+      --extraction tail
        "${@}"
 
 

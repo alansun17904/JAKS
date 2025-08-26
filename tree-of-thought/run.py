@@ -8,6 +8,9 @@ import argparse
 from tot.tasks import get_task
 from tot.methods.bfs import solve
 
+from cdatasets import DatasetBuilder, PromptFormatter
+from experiments.utils import parse_key_value_pairs
+
 def run(args):
     """
     Runs the main inference loop from the desired start_index 
@@ -57,7 +60,41 @@ def parse_args():
     args.add_argument('--n_evaluate_sample', type=int, default=1)
     args.add_argument('--n_select_sample', type=int, default=1)
 
+    ######################## CIRCUIT STABILITY ###################################
+    args.add_argument("--batch_size", type=int, help="batch size", default=32)
+    args.add_argument("--ndevices", type=int, help="number of devices", default=1)
+    args.add_argument("--seed", type=int, help="random seed", default=42)
+    args.add_argument(
+        "--dataset",
+        type=str,
+        choices=list(DatasetBuilder.ids.keys()),
+        help="dataset name",
+        required=True,
+    )
+    args.add_argument(
+        "--format",
+        type=str,
+        choices=list(PromptFormatter.ids.keys()),
+        help="format name",
+        required=True,
+    )
+    args.add_argument("--data_params", nargs="*", default=[], help="dataset params")
+    args.add_argument("--format_params", nargs="*", default=[], help="format params")
+    args.add_argument(
+        "--patching_metric", type=str, default="kl", help="patching metric"
+    )
+    args.add_argument(
+        "--extraction",
+        type=str,
+        default="last_token",
+        help="method for extracting comparison tokens",
+    )
+    args.add_argument("--ig_steps", type=int, default=5, help="number of IG steps")
+    args.add_argument("--device", type=str, default="cuda", help="device to use")
     args = args.parse_args()
+    args.data_params = parse_key_value_pairs(args.data_params)
+    args.format_params = parse_key_value_pairs(args.format_params)
+
     return args
 
 

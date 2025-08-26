@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 import subprocess
 
-from experiments.circuit_discovery import main as circuit_discovery
+from experiments.argparse import cs_entrypoint
 
 json_thought = {}
 all_entries = []
@@ -239,21 +239,22 @@ def solve(args, task, idx, to_print=True):
         name = json_thought["data_entry"].replace(" ", ",")
         thought_to_json(json_thought, f'{name}.json')
 
-        params = { "model" : "gpt2",
-        "ofile" : None,
-        "batch_size" : 1,
-        "ndevices" : 1,
-        "device" : "cuda",
-        "seed" : 42,
-        "dataset" : "custom",
-        "format" : "zero-shot",
-        "extraction" : "last_token",
-        }
+
         # evaluation method
         if args.method_evaluate == 'circuits':
-            circuit_discovery(params)
+            cs_entrypoint(model = args.backend,
+                          batch_size = args.batch_size,
+                          ndevices = args.ndevices,
+                          device = args.device,
+                          seed = args.seed,
+                          dataset = args.dataset,
+                          format = args.format,
+                          extraction = args.extraction,
+                          ig_steps = args.ig_steps,
+                          data_params = args.data_params,
+                          format_params = args.format_params)
 
-
+            quit()
             subprocess.run(["bash",
                             "circuit_stability/code/src/scripts/naive_run.sh"],
                            check=True)
