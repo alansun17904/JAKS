@@ -1,6 +1,5 @@
 ## built hopefully similar to custom_dataset.py
 
-
 import random
 import json
 import re
@@ -11,11 +10,12 @@ from .base import BaseDataset
 from .prompts import PromptFormatter
 from .utils import generic_collate
 
+
 from torch.utils.data import DataLoader, Subset
 
 class GSM8KDataset(BaseDataset):
     description = """You are solving grade school math word problems. Solve the problem step by step and provide the final answer."""
-    data_file = "gsm8k.json"  # You'll need to download/prepare this file
+    data_file = "gsm8k.json"
 
 
     def __init__(self, n=5, append_ans=True):
@@ -48,16 +48,12 @@ class GSM8KDataset(BaseDataset):
             data = json.load(f)
 
 
-        if isinstance(data, dict):
-            task = data.get("train")  #GSM8K comes with train test split I believe
-            if task is None:
-                # common alternates: 'test', 'data'
-                task = data.get("test") or data.get("data")
-                if task is None:
-                    # fallback: first list value in the dict
-                    task = next((v for v in data.values() if isinstance(v, list)), [])
-        else:
-            task = data
+        if not isinstance(data, dict) or "train" not in data or not isinstance(data["train"], list):
+            raise ValueError(
+                f"Expected {self.data_file} to be a dict with a 'train' list."
+            )
+
+        task = data["train"]
 
         self._examples = []
         for ex in task:
