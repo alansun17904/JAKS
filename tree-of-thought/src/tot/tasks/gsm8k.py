@@ -6,7 +6,9 @@ from tot.tasks.base import Task, DATA_PATH
 from tot.prompts.gsm8k import (
     standard_prompt,
     cot_prompt,
-    propose_prompt
+    propose_prompt, 
+    value_prompt,
+    value_last_step_prompt
 )
 
 _NUM_RE = re.compile(r"[+\-]?\d+(?:\.\d+)?")
@@ -65,7 +67,7 @@ class GSM8KTask(Task):
             raise ValueError(f"Expected {file} to be a dict with a 'train' list at {path}.")
 
         self.data = data["train"]
-
+        self.value_cache = {}
         self.steps = 5           # maybe increase or decrease later
         self.stops = ["\n"] * 4
 
@@ -103,3 +105,25 @@ class GSM8KTask(Task):
             return cot_prompt.format(input=x) + "Steps:\n" + y.strip() + "\n"
         state = _make_state_for_propose(x, y or "")
         return propose_prompt.format(input=state)
+    @staticmethod
+    def value_prompt_wrap(x, y):
+        """
+        Produce a rating prompt for partial vs. final steps.
+        """
+        if _is_final_step(y):
+            ans = _extract_predicted_answer(y)
+            return value_last_step_prompt.format(input=x, answer=ans)
+        state = _make_state_for_propose(x, y or "")
+        return value_prompt.format(input=state)
+
+    @staticmethod
+    def value_outputs_unwrap(x, y, value_outputs):
+        """
+        Convert textual ratings to a numeric value, mirroring Game24Task's ad-hoc map.
+        """
+        y_text = (y or "").strip()
+        if len(y_text.split("\n")) <= 1 and "answer" not in y_text.lower() and "####" not in y_text:
+            return 0.0
+        last_lines = [str(v).strip().split("\n")[-1].lower() for v in value_outputs]
+        score_map = {"impossible": 0.001, "likely": 1.0, "sure": 20.0}
+        return sum(score_map.get(name.strip(), 0.0) for name in last_lines)

@@ -62,3 +62,57 @@ Do not give the final answer unless you are finishing.
 Next step:
 '''
 
+# Value prompt: rate next-step promise (impossible / likely / sure)
+value_prompt = '''Rate how promising the next step is for solving the problem.
+Choose EXACTLY one: impossible, likely, sure.
+
+Example 1
+Problem:
+A jar has 20 candies. You eat 5. How many are left?
+Steps so far:
+- 20 - 5 = 15
+Next step quality: sure
+
+Example 2
+Problem:
+There are 12 muffins. You buy 3 more packs of 4.
+Steps so far:
+- 12 + 3
+Next step quality: likely
+
+Example 3
+Problem:
+A train goes 60 mph for 2 hours.
+Steps so far:
+- 60 - 2 = 58
+Next step quality: impossible
+
+{input}
+Your rating:'''
+
+# Value prompt for a proposed FINAL answer
+value_last_step_prompt = '''Judge whether the proposed FINAL answer is correct.
+Choose EXACTLY one: impossible, likely, sure.
+
+Example 1
+Problem:
+Each notebook costs $3. You buy 4.
+Answer: 12
+Your rating: sure
+
+Example 2
+Problem:
+A class has 28 students. 12 are boys.
+Answer: 15
+Your rating: impossible
+
+Example 3
+Problem:
+There are 45 liters of water. Drain 12, add 7.
+Answer: 40
+Your rating: sure
+
+Problem:
+{input}
+Answer: {answer}
+Your rating:'''

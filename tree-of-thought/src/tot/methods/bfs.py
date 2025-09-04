@@ -9,6 +9,7 @@ from tot.models import gpt
 import json
 from pathlib import Path
 import subprocess
+import re
 
 json_thought = {}
 all_entries = []
@@ -110,11 +111,23 @@ def get_proposals(task, x, y):
 
 ### adding a function for writing to json over here and calling it at the end of solve
 def thought_to_json(dictionary, filename):
-    p = Path("circuit-stability/code/src/cdatasets/data") / filename
+    # p = Path("circuit-stability/code/src/cdatasets/data") / filename
+    # p.parent.mkdir(parents=True, exist_ok=True)
+    # with p.open("w") as f:
+    #     json.dump(dictionary, f, indent=4)
+    #     f.write("\n")
+    sanitized_filename = re.sub(r'[<>:"/\\|?*,]', '_', filename)
+    
+    # Also limit filename length to avoid path too long errors
+    if len(sanitized_filename) > 100:
+        sanitized_filename = sanitized_filename[:100]
+    
+    p = Path("circuit-stability/code/src/cdatasets/data") / sanitized_filename
     p.parent.mkdir(parents=True, exist_ok=True)
     with p.open("w") as f:
         json.dump(dictionary, f, indent=4)
         f.write("\n")
+
 
 def get_circuit_scores(task, x, y):
     """

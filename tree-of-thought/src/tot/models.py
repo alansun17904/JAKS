@@ -53,6 +53,14 @@ def gpt(prompt,
                     variation = raw_output_text.strip().split("Possible next steps:")[-1]
                     # append everything except the last line, bc the stop rn is no.of token; so not guaranteed that last variation is complete
                     outputs.append(variation.split("\n")[:-1])
+                elif task == "GSM8KTask":
+                    cleaned_output = raw_output_text.strip()
+                    if cleaned_output:
+                        # Split by newlines and filter out empty lines
+                        variations = [line.strip() for line in cleaned_output.split('\n') if line.strip()]
+                        outputs.append(variations)
+                    else:
+                        outputs.append([])
 
             if not proposals:
                 if append_raw_output:
