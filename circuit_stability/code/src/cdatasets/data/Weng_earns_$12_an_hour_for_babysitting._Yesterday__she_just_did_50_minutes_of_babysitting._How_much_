@@ -1,0 +1,21 @@
+{
+    "data_entry": "Weng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?",
+    "steps": [
+        {
+            "step": 0,
+            "Prompt": "Given the problem and the steps so far, write ONLY the next step.\nDo not give the final answer unless you are finishing.\nProblem:\nWeng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?\n\nSteps so far:\n\nNext step:\n",
+            "raw_output_prop": [],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "Given the problem and the steps so far, write ONLY the next step.": [],
+                "Do not give the final answer unless you are finishing.": [],
+                "Problem:": [],
+                "Weng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?": [],
+                "Steps so far:": [],
+                "Next step:": [],
+                "Since Weng earned $12 an hour and she worked for 50 minutes, we need to calculate the fraction of an hour she worked. We know that there are 60 minutes in an hour, so to find the fraction of an hour she worked, we can use the following calculation: 50 minutes / 60 minutes = 5/12. This is the fraction of an hour she worked. We can then multiply this fraction by her hourly wage to find out how much she earned. We have the following calculation: 5/12 * 12 =? (Note: The question mark indicates that we have not yet solved for the answer.)<|eot_id|>": [],
+                "To find out how much she earned, we need to first determine how many hours she worked, and we know she worked 50 minutes, so we need to convert that to hours first. Since there are 60 minutes in one hour, we can divide 50 minutes by 60 to get the number of hours she worked. We can do this by performing the division problem 50 \u00f7 60, which equals.8333. However, since we're dealing with money, we'll round that to two decimal places, which is two places after the decimal point. So 50 \u00f7 60 = 0.83 hours worked. Now we can multiply 0.83 hours by her hourly wage to find out how much she earned. 0.83 \u00d7 $12 = $9.96. She earned $9.96. However, she was only paid $10 for the job. She was short $1.04. Weng was short $1.04 for the job. If she had received $10, she would have ended up with the same amount of money she would have if she had received an additional $1.04. In other words, $9.96 + $1.04 = $": []
+            }
+        }
+    ]
+}

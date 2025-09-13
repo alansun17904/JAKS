@@ -135,7 +135,7 @@ def thought_to_json(dictionary, filename):
     if len(sanitized_filename) > 100:
         sanitized_filename = sanitized_filename[:100]
     
-    p = Path("circuit-stability/code/src/cdatasets/data") / sanitized_filename
+    p = Path("circuit_stability/code/src/cdatasets/data") / sanitized_filename
     p.parent.mkdir(parents=True, exist_ok=True)
     with p.open("w") as f:
         json.dump(dictionary, f, indent=4)
