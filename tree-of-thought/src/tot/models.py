@@ -77,6 +77,14 @@ def gpt(prompt,
                     lines = variation.split("\n")[:-1]
                     good_lines = [ln for ln in lines if is_valid_step_line(ln)]
                     outputs.append(good_lines)
+                elif task == "GSM8KTask":
+                    cleaned_output = raw_output_text.strip()
+                    if cleaned_output:
+                        # Split by newlines and filter out empty lines
+                        variations = [line.strip() for line in cleaned_output.split('\n') if line.strip()]
+                        outputs.append(variations)
+                    else:
+                        outputs.append([])
 
             if not proposals:
                 if append_raw_output:

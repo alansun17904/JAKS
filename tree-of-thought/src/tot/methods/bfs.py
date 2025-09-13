@@ -7,6 +7,7 @@ import numpy as np
 from functools import partial
 from tot.models import gpt
 import json
+import re
 from pathlib import Path
 
 from experiments.argparse import cs_entrypoint
@@ -111,7 +112,18 @@ def get_proposals(task, x, y):
 
 ### adding a function for writing to json over here and calling it at the end of solve
 def thought_to_json(dictionary, filename):
-    p = Path("circuit_stability/code/src/cdatasets/data") / filename
+    # p = Path("circuit-stability/code/src/cdatasets/data") / filename
+    # p.parent.mkdir(parents=True, exist_ok=True)
+    # with p.open("w") as f:
+    #     json.dump(dictionary, f, indent=4)
+    #     f.write("\n")
+    sanitized_filename = re.sub(r'[<>:"/\\|?*,]', '_', filename)
+    
+    # Also limit filename length to avoid path too long errors
+    if len(sanitized_filename) > 100:
+        sanitized_filename = sanitized_filename[:100]
+    
+    p = Path("circuit-stability/code/src/cdatasets/data") / sanitized_filename
     p.parent.mkdir(parents=True, exist_ok=True)
     with p.open("w") as f:
         json.dump(dictionary, f, indent=4)
@@ -226,11 +238,6 @@ def solve(args, task, idx, to_print=True):
         ids = list(range(len(new_ys)))
         print(f"To debug: ids: {ids}")
 
-        # TODO: Add additional cli args for circuit discovery as well
-        # TODO: Make this into a function and call the circuit_discovery script with params
-        # TODO: If above is done we have to change path too.
-        # Edit params at circuit_stability/code/src/scripts/naive_run.sh
-        #TODO: Circuit selection goes inside the first if
 
         # Append each thought's data to the json
         json_thought["steps"].append(thought_dict)
