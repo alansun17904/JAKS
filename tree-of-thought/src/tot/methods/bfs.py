@@ -8,7 +8,6 @@ from functools import partial
 from tot.models import gpt
 import json
 from pathlib import Path
-import subprocess
 
 from experiments.argparse import cs_entrypoint
 
