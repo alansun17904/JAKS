@@ -1,0 +1,65 @@
+{
+    "data_entry": "1 1 11 11",
+    "steps": [
+        {
+            "step": 0,
+            "Prompt": "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 1 1 11 11\nPossible next steps:\n",
+            "raw_output_prop": [],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "": [
+                    15.47934701507071
+                ],
+                "1 + 1 = 2 (left: 1 11 11 2)": [
+                    8.778129916601292
+                ],
+                "1 * 1 = 1 (left: 1 11 11 1)": [
+                    17.172099800307738
+                ],
+                "1 + 1 = 2 (left: 1 2 11 11)": [
+                    13.947663213158217
+                ],
+                "1 * 1 = 1 (left: 1 1 11 11)": [
+                    1.8844527804051028
+                ]
+            }
+        },
+        {
+            "step": 1,
+            "Prompt": "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 1 1 11 11\nPossible next steps:\n",
+            "raw_output_prop": [],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "": [
+                    15.47934701507071
+                ],
+                "1 + 1 = 2 (left: 1 11 11 2)": [
+                    8.778129916601292
+                ],
+                "1 / 1 = 1 (left: 1 11 11 1)": [
+                    17.172099800307738
+                ],
+                "1 + 1 = 2 (left: 11 11 2)": [
+                    13.947663213158217
+                ],
+                "1 * 1 = 1 (left: 11 11 1)": [
+                    1.8844527804051028
+                ]
+            }
+        },
+        {
+            "step": 2,
+            "Prompt": "Input: 2 8 8 14\nPossible next steps:\n2 + 8 = 10 (left: 8 10 14)\n8 / 2 = 4 (left: 4 8 14)\n14 + 2 = 16 (left: 8 8 16)\n2 * 8 = 16 (left: 8 14 16)\n8 - 2 = 6 (left: 6 8 14)\n14 - 8 = 6 (left: 2 6 8)\n14 /  2 = 7 (left: 7 8 8)\n14 - 2 = 12 (left: 8 8 12)\nInput: 11 11 1\nPossible next steps:\n",
+            "raw_output_prop": [],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "": [],
+                "11 + 11 = 22 (left: 1 22)": [],
+                "11 + 1 = 12 (left: 1 11 12)": [],
+                "1 + 11 = 12 (left: 12)": [],
+                "11 / 11 = 1 (left: 1 1 22)": [],
+                "1 + 11 = 12 (left: 1 12)": []
+            }
+        }
+    ]
+}
