@@ -1,0 +1,163 @@
+{
+    "data_entry": "Weng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?",
+    "steps": [
+        {
+            "step": 0,
+            "Prompt": "Given the problem and the steps so far, write ONLY the next step.\nDo not give the final answer unless you are finishing.\nProblem:\nWeng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?\n\nSteps so far:\n\nNext step:\n",
+            "raw_output_prop": [],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "Given the problem and the steps so far, write ONLY the next step.": [
+                    15.47934701507071
+                ],
+                "Do not give the final answer unless you are finishing.": [
+                    8.778129916601292
+                ],
+                "Problem:": [
+                    17.172099800307738
+                ],
+                "Weng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?": [
+                    13.947663213158217
+                ],
+                "Steps so far:": [
+                    1.8844527804051028
+                ],
+                "Next step:": [
+                    19.512471410383483
+                ],
+                "Since Weng earns $12 for every hour, we need to determine how many hours she worked. To do this, we will divide the amount of time she worked (in hours) by her hourly wage. 50 minutes \u00f7 60 minutes": [
+                    15.223032900105068
+                ],
+                "To find Weng's earnings, we need to first find out how many hours she worked. Since the problem tells us that she worked 50 minutes, we need to convert those minutes into hours. There are 60 minutes in an hour. We": [
+                    15.721500041233798
+                ]
+            }
+        },
+        {
+            "step": 1,
+            "Prompt": "Given the problem and the steps so far, write ONLY the next step.\nDo not give the final answer unless you are finishing.\nProblem:\nWeng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?\n\nSteps so far:\nSteps so far:\n\nNext step:\n",
+            "raw_output_prop": [],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "Given the problem and the steps so far, write ONLY the next step.": [
+                    15.47934701507071
+                ],
+                "Do not give the final answer unless you are finishing.": [
+                    8.778129916601292
+                ],
+                "Problem:": [
+                    17.172099800307738
+                ],
+                "Weng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?": [
+                    13.947663213158217
+                ],
+                "Steps so far:": [
+                    1.8844527804051028
+                ],
+                "Next step:": [
+                    19.512471410383483
+                ],
+                "She needs to calculate her earnings using the time she worked. Since she earns $12 an hour, we can multiply the amount of time she worked (in hours) by her hourly wage to find her total earnings. She worked for 50 minutes,": [
+                    15.223032900105068
+                ],
+                "To find out how much Weng earned, we need to multiply the hourly wage by the fraction of the hour she worked. Since she worked for 50 minutes, which is half an hour, we can use the fraction 1/2. So": [
+                    15.721500041233798
+                ]
+            }
+        },
+        {
+            "step": 2,
+            "Prompt": "Given the problem and the steps so far, write ONLY the next step.\nDo not give the final answer unless you are finishing.\nProblem:\nWeng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?\n\nSteps so far:\nSteps so far:\nTo find out how much Weng earned, we need to multiply the hourly wage by the fraction of the hour she worked. Since she worked for 50 minutes, which is half an hour, we can use the fraction 1/2. So\n\nNext step:\n",
+            "raw_output_prop": [],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "Given the problem and the steps so far, write ONLY the next step.": [
+                    15.47934701507071
+                ],
+                "Do not give the final answer unless you are finishing.": [
+                    8.778129916601292
+                ],
+                "Problem:": [
+                    17.172099800307738
+                ],
+                "Weng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?": [
+                    13.947663213158217
+                ],
+                "Steps so far:": [
+                    1.8844527804051028
+                ],
+                "To find out how much Weng earned, we need to multiply the hourly wage by the fraction of the hour she worked. Since she worked for 50 minutes, which is half an hour, we can use the fraction 1/2. So": [
+                    19.512471410383483
+                ],
+                "Next step:": [
+                    15.223032900105068
+                ],
+                "We will multiply $12 by 1/2. To do this, we need to divide $12 by 2 to find the hourly wage for half an hour.": [
+                    15.721500041233798
+                ],
+                "## Step 1: Determine the hourly wage for half an hour.": [
+                    2.5631445398782415
+                ],
+                "To find": [
+                    9.008268371973447
+                ],
+                "Multiply 12 by 1/2. First, multiply 12 by 1, which equals 12. Then, multiply 12 by 1/2, which equals 6. Therefore, Weng earned $6 for working 50": [
+                    7.416589686627392
+                ]
+            }
+        },
+        {
+            "step": 3,
+            "Prompt": "Given the problem and the steps so far, write ONLY the next step.\nDo not give the final answer unless you are finishing.\nProblem:\nWeng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?\n\nSteps so far:\nSteps so far:\nTo find out how much Weng earned, we need to multiply the hourly wage by the fraction of the hour she worked. Since she worked for 50 minutes, which is half an hour, we can use the fraction 1/2. So\nSteps so far:\n\nNext step:\n",
+            "raw_output_prop": [],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "Given the problem and the steps so far, write ONLY the next step.": [
+                    15.47934701507071
+                ],
+                "Do not give the final answer unless you are finishing.": [
+                    8.778129916601292
+                ],
+                "Problem:": [
+                    17.172099800307738
+                ],
+                "Weng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?": [
+                    13.947663213158217
+                ],
+                "Steps so far:": [
+                    1.8844527804051028
+                ],
+                "To find out how much Weng earned, we need to multiply the hourly wage by the fraction of the hour she worked. Since she worked for 50 minutes, which is half an hour, we can use the fraction 1/2. So": [
+                    19.512471410383483
+                ],
+                "Next step:": [
+                    15.223032900105068
+                ],
+                "Multiply the hourly wage by the fraction to find the amount she earned. 12 * (1/2) is equal to 6. Therefore, Weng earned $6. However, we don't need to calculate this value. The solution is": [
+                    15.721500041233798
+                ],
+                "Multiply the hourly wage ($12) by the fraction 1/2. This will give us the amount she earned in dollars. We can represent this as $12 \\times \\frac{1}{2} =?$ The question mark represents the": [
+                    2.5631445398782415
+                ]
+            }
+        },
+        {
+            "step": 4,
+            "Prompt": "Given the problem and the steps so far, write ONLY the next step.\nDo not give the final answer unless you are finishing.\nProblem:\nWeng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?\n\nSteps so far:\nSteps so far:\nTo find out how much Weng earned, we need to multiply the hourly wage by the fraction of the hour she worked. Since she worked for 50 minutes, which is half an hour, we can use the fraction 1/2. So\nSteps so far:\nSteps so far:\n\nNext step:\n",
+            "raw_output_prop": [],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "Given the problem and the steps so far, write ONLY the next step.": [],
+                "Do not give the final answer unless you are finishing.": [],
+                "Problem:": [],
+                "Weng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?": [],
+                "Steps so far:": [],
+                "To find out how much Weng earned, we need to multiply the hourly wage by the fraction of the hour she worked. Since she worked for 50 minutes, which is half an hour, we can use the fraction 1/2. So": [],
+                "Next step:": [],
+                "We can multiply 12 by 1/2, or multiply 12 by 0.5 to get the amount Weng earned. We can do this:": [],
+                "## Step 1: Multiply 12 by": [],
+                "Find the product of 12 and 1/2. To do this, multiply 12 by 1 and then multiply 12 by 2 and add the two products together. 12 x 1 = 12 12 x 2": []
+            }
+        }
+    ]
+}

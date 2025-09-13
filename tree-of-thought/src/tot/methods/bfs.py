@@ -124,10 +124,23 @@ def thought_to_json(dictionary, filename):
         sanitized_filename = sanitized_filename[:100]
     
     p = Path("circuit-stability/code/src/cdatasets/data") / sanitized_filename
+    # p = Path("circuit-stability/code/src/cdatasets/data") / filename
+    # p.parent.mkdir(parents=True, exist_ok=True)
+    # with p.open("w") as f:
+    #     json.dump(dictionary, f, indent=4)
+    #     f.write("\n")
+    sanitized_filename = re.sub(r'[<>:"/\\|?*,]', '_', filename)
+    
+    # Also limit filename length to avoid path too long errors
+    if len(sanitized_filename) > 100:
+        sanitized_filename = sanitized_filename[:100]
+    
+    p = Path("circuit-stability/code/src/cdatasets/data") / sanitized_filename
     p.parent.mkdir(parents=True, exist_ok=True)
     with p.open("w") as f:
         json.dump(dictionary, f, indent=4)
         f.write("\n")
+
 
 def get_circuit_scores(task, x, y):
     """
