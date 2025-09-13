@@ -9525,7 +9525,7 @@
       "answer": "First find out how many ounces of milk James had to begin with by multiplying the number of gallons by the number of ounces per gallon: 3 gallons * 128 ounces/gallon = <<3*128=384>>384 oz\nNow subtract the 13 ounces James drank from the initial amount of milk: 384 oz - 13 oz = <<384-13=371>>371 oz\n#### 371"
     },
     {
-      "question": "Clive opens a box full of different colored balls.   The box contains 6 blue balls, 4 red balls, 3 times as many green balls as blue ones and twice as many yellow ones as red ones.   How many balls are in the box Clive opens?",
+      "question": "Clive opens a box full of different colored balls.  The box contains 6 blue balls, 4 red balls, 3 times as many green balls as blue ones and twice as many yellow ones as red ones.  How many balls are in the box Clive opens?",
       "answer": "There are 3 times as many green balls as blue balls so green balls = blue balls * 3. Green balls = 6 blue balls * 3 = <<6*3=18>>18 green balls\nThere are 2 times as many yellow balls as red ones so yellow balls = red balls * 2. Yellow balls = 4 red balls * 2 = <<4*2=8>>8 yellow balls\nThe total number of all the balls is 6 blue + 4 red + 18 green + 8 yellow: 6+4+18+8 = <<6+4+18+8=36>>36 balls\n#### 36"
     },
     {
