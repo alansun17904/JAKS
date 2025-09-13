@@ -13,7 +13,7 @@
 
 
 python tree-of-thought/run.py \
-      --backend gpt2 \
+      --backend meta-llama/llama-3.2-3B-Instruct\
       --task game24  \
       --method_generate propose \
       --method_evaluate value \
