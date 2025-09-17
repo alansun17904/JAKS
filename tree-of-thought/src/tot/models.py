@@ -3,13 +3,19 @@ Provides wrappers for OpenAI's ChatCompletion API with backoff, token/cost track
 """
 
 import os
-
+from functools import lru_cache
 from .t_lens_generate import get_tlens_model
+DEFAULT_MAX_TOKENS = 64
+DEFAULT_STOPS = ["\n\n", "Final answer:", "FINAL_ANSWER:"]
+
+@lru_cache(maxsize=8)
+def _get_tlens(model_id: str):
+    return get_tlens_model(model_id=model_id)
 
 def gpt(prompt,
         model="gpt2",
         temperature=0.7,
-        max_tokens=50,
+        max_tokens=DEFAULT_MAX_TOKENS,
         n=1,
         stop=None,
         json = None,
@@ -28,44 +34,41 @@ def gpt(prompt,
     Returns:
         list: List of generated completions (strings).
     """
-    append_raw_output = False
-    # Check if model is gpt-2
-    if model.lower() not in ['gpt-3.5-turbo', 'gpt-4o']:
-        outputs = []
-        print(model)
-        # Lazy import so that it only initiates once
-        t_lens = get_tlens_model(model_id = model)
-        # generate variations using hf_models
-        while n > 0: # n is the number of generations we want, each generation has x variations
-            raw_output_text = t_lens.generate(prompt,  # TODO maybe make the prompt look like messages below
-                                          temperature=temperature,
-                                          max_tokens=max_tokens,
-                                          )
-            n -= 1
-            #print(f"To debug:raw output {raw_output_text}")
+    stops = stop if stop is not None else DEFAULT_STOPS
+    tlens = _get_tlens(model)
+    outputs = []
+    
+    for _i in range(max(1, n)):
+        raw = tlens.generate(prompt, temperature=temperature, max_tokens=max_tokens)
 
-            if proposals:
-                # Put raw output into json
-                if append_raw_output:
-                    json["raw_output_prop"].append(raw_output_text)
-                # If we look at the prompt anything after 'Possible next steps:' are variations
-                if task == "Game24Task":
-                    variation = raw_output_text.strip().split("Possible next steps:")[-1]
-                    # append everything except the last line, bc the stop rn is no.of token; so not guaranteed that last variation is complete
-                    outputs.append(variation.split("\n")[:-1])
-                elif task == "GSM8KTask":
-                    cleaned_output = raw_output_text.strip()
-                    if cleaned_output:
-                        # Split by newlines and filter out empty lines
-                        variations = [line.strip() for line in cleaned_output.split('\n') if line.strip()]
-                        outputs.append(variations)
-                    else:
-                        outputs.append([])
+        if proposals:
+            lines = []
+            text = raw.strip()
 
-            if not proposals:
-                if append_raw_output:
-                    json[x]["raw_output_eval"].append(raw_output_text)
-                #print(raw_output_text)
-                outputs.append(raw_output_text)
-            #print(f"To debug: {outputs}")
-        return outputs
+            # --- TASK-SPECIFIC PARSING (compat with your old code) ---
+            if task == "Game24Task":
+                # Keep lines after the marker
+                part = text.split("Possible next steps:", 1)[-1]
+                lines = [ln.strip() for ln in part.splitlines() if ln.strip()]
+                # (Optionally drop the very last line if you fear truncation)
+                # if lines: lines = lines[:-1]
+
+            elif task == "GSM8KTask":
+                lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+
+            else:
+                # default: split on lines
+                lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+
+            outputs.append(lines)
+
+            # Optional raw logging
+            if isinstance(json, dict) and isinstance(json.get("raw_output_prop"), list):
+                json["raw_output_prop"].append(raw)
+
+        else:
+            outputs.append(raw)
+            if isinstance(json, dict) and isinstance(json.get("raw_output_eval"), list):
+                json["raw_output_eval"].append(raw)
+
+    return outputs

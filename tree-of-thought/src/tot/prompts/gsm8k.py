@@ -56,11 +56,11 @@ Steps:
 '''
 
 # 1-shot propose (the ToT engine passes "Problem.../Steps so far..." in {input})
-propose_prompt = '''Given the problem and the steps so far, write ONLY the next step.
-Do not give the final answer unless you are finishing.
+propose_prompt = '''Given the problem and the steps so far, write ONLY the next step as ONE short line (< 20 words).
+Do NOT repeat the prompt. Do NOT restate the problem. Do NOT add labels or extra text.
+Output exactly one line with the next step (no bullets).
 {input}
-Next step:
-'''
+Next step:'''
 
 # Value prompt: rate next-step promise (impossible / likely / sure)
 value_prompt = '''Rate how promising the next step is for solving the problem.

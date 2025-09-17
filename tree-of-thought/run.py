@@ -41,18 +41,18 @@ def parse_args():
         argparse.Namespace : all the CLI args passed 
     """
     args = argparse.ArgumentParser()
-    args.add_argument('--backend', type=str, default='gpt2',  choices=['gpt2', 'meta-llama/llama-3.2-3B-Instruct'])
+    args.add_argument('--backend', type=str, default='gpt2',  choices=['gpt2', 'meta-llama/llama-3.2-3B-Instruct', 'pythia-6.9b-deduped','pythia-1.4b-deduped'])
     args.add_argument('--temperature', type=float, default=0.7)
 
     args.add_argument('--task', type=str, required=True, choices=['game24', 'text', 'crosswords', 'gsm8k'])
-    args.add_argument('--task_start_index', type=int, default=900)
-    args.add_argument('--task_end_index', type=int, default=1000)
+    args.add_argument('--task_start_index', type=int, default=0)
+    args.add_argument('--task_end_index', type=int, default=5)
 
     args.add_argument('--naive_run', action='store_true')
 
-    args.add_argument('--method_generate', type=str, default='propose')
-    args.add_argument('--method_evaluate', type=str, choices=['value', 'circuits'])
-    args.add_argument('--method_select', type=str, choices=['sample', 'greedy'], default='greedy')
+    args.add_argument('--method_generate', type=str, default='propose', choices = ['propose', 'cot'])
+    args.add_argument('--method_evaluate', type=str, choices=['value', 'circuits'], default = 'value')
+    args.add_argument('--method_select', type=str, choices=['sample', 'greedy', 'first'], default='first')
     args.add_argument('--n_generate_sample', type=int, default=1)  # only thing needed if naive_run
     args.add_argument('--n_evaluate_sample', type=int, default=1)
     args.add_argument('--n_select_sample', type=int, default=1)

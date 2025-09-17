@@ -14,6 +14,37 @@ import re
 json_thought = {}
 all_entries = []
 
+def _sanitize_proposals(lines, prompt_text, max_len=120):
+    """Keep only non-empty, de-duplicated lines that are not from the prompt and look like real steps."""
+    prompt_lines = set(l.strip() for l in prompt_text.splitlines() if l.strip())
+    cleaned = []
+    seen = set()
+    for ln in lines:
+        s = (ln or "").strip()
+        if not s:
+            continue
+        if s in prompt_lines:
+            continue
+        bad_starts = ("problem:", "steps so far:", "next step:", "given the problem", "do not give")
+        if s.lower().startswith(bad_starts):
+            continue
+        if len(s) > max_len:
+            continue
+        if s in seen:
+            continue
+        seen.add(s)
+        cleaned.append(s)
+    return cleaned
+
+
+def _looks_final(s: str) -> bool:
+    if not s:
+        return False
+    t = s.lower()
+    return ("####" in t) or ("final answer" in t) or ("final_answer:" in t)
+
+
+
 def get_value(task, x, y, n_evaluate_sample, cache_value=True):
     """
     To ask the llm how well the current step is on the scale of (sure/maybe/impossible)
@@ -63,14 +94,14 @@ def get_values(task, x, ys, n_evaluate_sample, cache_value=True):
     local_value_cache = {}
     for y in ys:  # each partial output
         if y in local_value_cache:  # avoid duplicate candidates
-            value = 0
+            value = local_value_cache[y]
         else:    
             value = get_value(task, x, y, n_evaluate_sample, cache_value=cache_value)
             local_value_cache[y] = value
         values.append(value)
     return values
 
-def get_proposals(task, x, y): 
+def get_proposals(task, x, y, n_generate_sample, thought_dict): 
     """
     Ask LLM to propose a set of first steps based on few-shot prompting.
 
@@ -89,25 +120,43 @@ def get_proposals(task, x, y):
     print(thought_dict)
 
     # each line is a variation
-    proposals = gpt(propose_prompt,
-                    n=2, stop=None,
+    raw_lists = gpt(propose_prompt,
+                    n= n_generate_sample, stop=None,
                     json = thought_dict,
                     x = x,
                     proposals = True,
                     task = type(task).__name__ )
 
+    flat = list(itertools.chain(*raw_lists))
+    proposals = _sanitize_proposals(flat, propose_prompt) 
     print(f"To debug: thought variations: {proposals}")
 
-
-    proposals = list(itertools.chain(*proposals))  # this flattens it into a single list
-
-    for proposal in proposals:
-        thought_dict["thought_variation"][proposal] = []
+    for step_line in proposals:
+        thought_dict["thought_variation"][step_line] = []
 
     print(f"To debug: {thought_dict}")
 
     # store each variation in list along with previous variation
-    return [y + _ + '\n' for _ in proposals]
+    return [y + step_line + '\n' for step_line in proposals]
+
+def get_cot_completions(task, x, y, n_generate_sample, thought_dict):
+    """
+    Use CoT prompt to produce full solutions (often final).
+    """
+    cot = task.cot_prompt_wrap(x, y or "")
+    thought_dict["Prompt"] = cot
+    print(thought_dict)
+
+    outs = gpt(
+        cot,
+        n=n_generate_sample,
+        stop=None,
+        json=thought_dict,
+        x=x,
+        proposals=False,
+        task=type(task).__name__,
+    )
+    return [out if out.endswith("\n") else out + "\n" for out in outs]
 
 ### adding a function for writing to json over here and calling it at the end of solve
 def thought_to_json(dictionary, filename):
@@ -159,61 +208,25 @@ def solve(args, task, idx, to_print=True):
     global json_thought
     global thought_dict
     # just adds these args without actually calling the function
+    try:
+        import random, torch
+        random.seed(0); np.random.seed(0)
+        torch.manual_seed(0); torch.cuda.manual_seed_all(0)
+    except Exception:
+        pass
+
+
     gpt = partial(gpt, model=args.backend, temperature=args.temperature)
     print(gpt)
     x = task.get_input(idx)  # gets input at current index
     ys = ['']  # current output candidates / thought variations
     infos = []
 
-    """
-    SCHEMA FOR JSON
-[
-  {
-    "data_entry": "1 1 11 11",
-    "steps": [
-      {
-        "step": 0,
-        "prompt": 0,
-        "raw_output": "11 - 1 = 10 (left: 1 11 10)",
-        "thought_variation": {
-          "var1": { "heuristic": 0.82, "circuit_stability": 13.68 },
-          "var2": { "heuristic": 0.55, "circuit_stability": -7.90 }
-        }
-      },
-      {
-        "step": 1,
-        "prompt": 1,
-        "raw_output": "10 + 1 = 11 (left: 11 11)",
-        "thought_variation": {
-          "var1": { "heuristic": 0.73, "circuit_stability": 4.90 }
-        }
-      }
-    ]
-  },
-  {
-    "data_entry": "2 8 8 14",
-    "steps": [
-      {
-        "step": 0,
-        "prompt": 0,
-        "raw_output": "2 + 8 = 10 (left: 8 10 14)",
-        "thought_variation": {
-          "var1": { "heuristic": 0.90, "circuit_stability": 4.12 }
-        }
-      }
-    ]
-  }
-]
 
-    """
     # Structure of JSON object
-    json_thought["data_entry"] = str(x)
-    json_thought["steps"] = []
+    json_thought = {"data_entry" : str(x), "steps": []}
 
     for step in range(task.steps): # each class instance has an attribute steps allowed to complete given task
-        thought_dict = {}
-
-
         thought_dict = {"step": step,
                         "Prompt": None,
                         "raw_output_prop": [],
@@ -223,8 +236,11 @@ def solve(args, task, idx, to_print=True):
 
         # Ask model to propose variations of first step /tot/prompts/{task}.py propose_prompt
         if args.method_generate == 'propose':
-            new_ys = [get_proposals(task, x, y) for y in ys]
-
+            new_ys_nested = [get_proposals(task, x, y, args.n_generate_sample, thought_dict) for y in ys]
+        elif args.method_generate == 'cot':
+            new_ys_nested = [get_cot_completions(task, x, y, args.n_generate_sample, thought_dict) for y in ys]
+        else:
+            new_ys_nested = [ys]
         #print(f"To debug: new_ys: {new_ys}")
 
         # the list of list for concurrent step's variation generation is a list of list
@@ -232,7 +248,7 @@ def solve(args, task, idx, to_print=True):
 
         print(f"To debug: {thought_dict}")
 
-        new_ys = list(itertools.chain(*new_ys)) # this flattens it into a single list
+        new_ys = list(itertools.chain(*new_ys_nested)) # this flattens it into a single list
         #print(f"To debug: flattened new_ys: {new_ys}")
 
         ids = list(range(len(new_ys)))
@@ -252,22 +268,28 @@ def solve(args, task, idx, to_print=True):
 
 
         # evaluation method
-        if args.method_evaluate == 'circuits':
-
-            subprocess.run(["bash",
-                            "circuit-stability/code/src/scripts/naive_run.sh"],
-                           check=True)
-            values = get_circuit_scores(task, x, new_ys)
-        elif args.method_evaluate == 'value':
+        if args.method_select == 'first':
+            # Skip scoring completely
+            values = [0.0] * len(new_ys)
+        else:
+    # value-based scoring only (circuits removed for now)
             values = get_values(task, x, new_ys, args.n_evaluate_sample)
+        # elif args.method_evaluate == 'circuits':
+
+        #     subprocess.run(["bash",
+        #                     "circuit-stability/code/src/scripts/naive_run.sh"],
+        #                    check=True)
+        #     values = get_circuit_scores(task, x, new_ys)
+        # elif args.method_evaluate == 'value':
+        #     values = get_values(task, x, new_ys, args.n_evaluate_sample)
 
         ### TODO: ASSIGNING RANDOM VALUES SO THAT WE HAVE THE PIPELINE RUNNING
         ### TODO: HAVE TO REMOVE IN FINAL
-        print(f"To debug:Values {values}")
-        rng = np.random.default_rng(42)  # optional seed
-        n, lo, hi = len(values), 0.001, 20
-        values = list(rng.uniform(lo, hi, size=n))
-        print(f"To debug:Values {values}")
+        # print(f"To debug:Values {values}")
+        # rng = np.random.default_rng(42)  # optional seed
+        # n, lo, hi = len(values), 0.001, 20
+        # values = list(rng.uniform(lo, hi, size=n))
+        # print(f"To debug:Values {values}")
 
 
         #Append score for each variation
@@ -275,7 +297,9 @@ def solve(args, task, idx, to_print=True):
             elist.append(eval)
 
         # selection
-        if args.method_select == 'sample':
+        if args.method_select == 'first':
+            select_ids = [0]
+        elif args.method_select == 'sample':
 
             ps = np.array(values) / sum(values)
             select_ids = np.random.choice(ids, size=args.n_select_sample, p=ps).tolist()
@@ -294,7 +318,8 @@ def solve(args, task, idx, to_print=True):
         infos.append({'step': step, 'x': x, 'ys': ys, 'new_ys': new_ys, 'values': values, 'select_new_ys': select_new_ys})
         ys = select_new_ys
 
-
+        if any(_looks_final(y) for y in ys):
+            break
 
     #name = json_thought["data_entry"].replace(" ", ",")
     #thought_to_json(json_thought, f'{name}.json')
