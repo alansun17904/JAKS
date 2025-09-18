@@ -13,6 +13,16 @@ from tot.prompts.gsm8k import (
 
 _NUM_RE = re.compile(r"[+\-]?\d+(?:\.\d+)?")
 
+def _finish_prompt(input_text, steps_so_far):
+    steps = (steps_so_far or "").strip()
+    return (
+        'Continue the solution and conclude with "Final answer: <number>".\n'
+        f"Problem:\n{input_text}\n"
+        "Steps so far:\n"
+        f"{steps}\n"
+    )
+
+
 def _short_answer_from_rationale(answer_text):
     if not answer_text:
         return ""
@@ -94,15 +104,14 @@ class GSM8KTask(Task):
 
     @staticmethod
     def cot_prompt_wrap(x, y=""):
-        return cot_prompt.format(input=x) + (y or "")
+        return _finish_prompt(x, y)
 
     @staticmethod
     def propose_prompt_wrap(x, y=""):
-        """
-        If y looks final, allow a finishing CoT; otherwise, request the 'next step' only.
-        """
-        if _is_final_step(y):
-            return cot_prompt.format(input=x) + "Steps:\n" + y.strip() + "\n"
+        if _is_final_step(y) or (y or "").strip().count("\n") >= 3:
+            # no extra "Steps:" here
+            return _finish_prompt(x,y)
+
         state = _make_state_for_propose(x, y or "")
         return propose_prompt.format(input=state)
     @staticmethod

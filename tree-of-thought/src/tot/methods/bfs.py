@@ -11,29 +11,69 @@ from pathlib import Path
 import subprocess
 import re
 
+_TOKEN_RE = re.compile(r"<\|[^>]+?\|>") 
 json_thought = {}
 all_entries = []
 
-def _sanitize_proposals(lines, prompt_text, max_len=120):
-    """Keep only non-empty, de-duplicated lines that are not from the prompt and look like real steps."""
-    prompt_lines = set(l.strip().lower() for l in prompt_text.splitlines() if l.strip())
-    cleaned, seen = [], set()
-    for ln in lines or []:
-        s = (ln or "").strip()
-        if not s: continue
-        t = s.lower().lstrip("-•* ").strip()
-        t = re.sub(r'^\s*next step:\s*', '', t, flags=re.I)
-        t = re.sub(r'<\|[^>]+?\|>', '', t)
-        # drop echoes/labels
-        if t in prompt_lines: continue
-        if t.startswith(("problem:", "steps so far:", "given the problem", "do not")):
+def _fallback_one_liner(lines, prompt_text, max_len=120):
+    """
+    Last-resort, task-agnostic fallback: pull a short, clean next-step line
+    from whatever the model returned, so we ALWAYS have at least one proposal.
+    """
+    for raw in (lines or []):
+        s = (raw or "").strip()
+        if not s:
             continue
+        # strip any special chat tokens
+        s = _TOKEN_RE.sub("", s).strip()
+        # drop prompt echo
+        if s in prompt_text or s.lower().startswith(("problem:", "steps so far:")):
+            continue
+        # drop 'next step:' prefix if present
+        if s.lower().startswith("next step:"):
+            s = s.split(":", 1)[1].strip()
+        # keep it short and single-line
+        s = s.replace("\n", " ").strip()
+        if not s:
+            continue
+        if len(s) > max_len:
+            s = s[:max_len].rstrip()
+        # trim to ~16 words to avoid rambles
+        words = s.split()
+        if len(words) > 16:
+            s = " ".join(words[:16])
+        # reject extremely generic or prompty fragments
+        bad_starts = ("given the problem", "do not", "output exactly", "next step")
+        if s.lower().startswith(bad_starts):
+            continue
+        return s
+    # Absolute last resort: generic but harmless step
+    return "compute the next intermediate step."
 
-        t = t[:max_len].rstrip()
-        if t and t not in seen:
-            seen.add(t)
-            cleaned.append(t)
 
+
+def _sanitize_proposals(lines, prompt_text, prior_text=None, max_len=120):
+    prompt_lines = set(l.strip() for l in prompt_text.splitlines() if l.strip())
+    prior = (prior_text or "").lower()
+    cleaned, seen = [], set()
+    for ln in lines:
+        s = (ln or "").strip()
+        if not s:
+            continue
+        sl = s.lower()
+        if s in prompt_lines:
+            continue
+        if sl in seen:
+            continue
+        if sl and sl in prior:   # NEW: don’t repeat a step we already wrote
+            continue
+        bad_starts = ("problem:", "steps so far:", "next step:", "given the problem", "do not give")
+        if sl.startswith(bad_starts):
+            continue
+        if len(s) > max_len:
+            s = s[:max_len].rstrip()
+        seen.add(sl)
+        cleaned.append(s)
     if not cleaned:
         cleaned = [_fallback_one_liner(lines, prompt_text, max_len)]
     return cleaned
@@ -129,7 +169,7 @@ def get_proposals(task, x, y, n_generate_sample, thought_dict):
                     task = type(task).__name__ )
 
     flat = list(itertools.chain(*raw_lists))
-    proposals = _sanitize_proposals(flat, propose_prompt) 
+    proposals = _sanitize_proposals(flat, propose_prompt, prior_text=y)
     print(f"To debug: thought variations: {proposals}")
 
     for step_line in proposals:
@@ -328,4 +368,5 @@ def solve(args, task, idx, to_print=True):
     if to_print: 
         print(ys)
     return ys, {'steps': infos}
+
 
