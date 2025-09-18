@@ -16,26 +16,27 @@ all_entries = []
 
 def _sanitize_proposals(lines, prompt_text, max_len=120):
     """Keep only non-empty, de-duplicated lines that are not from the prompt and look like real steps."""
-    prompt_lines = set(l.strip() for l in prompt_text.splitlines() if l.strip())
-    cleaned = []
-    seen = set()
-    for ln in lines:
+    prompt_lines = set(l.strip().lower() for l in prompt_text.splitlines() if l.strip())
+    cleaned, seen = [], set()
+    for ln in lines or []:
         s = (ln or "").strip()
-        if not s:
+        if not s: continue
+        t = s.lower().lstrip("-•* ").strip()
+        t = re.sub(r'^\s*next step:\s*', '', t, flags=re.I)
+        t = re.sub(r'<\|[^>]+?\|>', '', t)
+        # drop echoes/labels
+        if t in prompt_lines: continue
+        if t.startswith(("problem:", "steps so far:", "given the problem", "do not")):
             continue
-        if s in prompt_lines:
-            continue
-        bad_starts = ("problem:", "steps so far:", "next step:", "given the problem", "do not give")
-        if s.lower().startswith(bad_starts):
-            continue
-        if len(s) > max_len:
-            continue
-        if s in seen:
-            continue
-        seen.add(s)
-        cleaned.append(s)
-    return cleaned
 
+        t = t[:max_len].rstrip()
+        if t and t not in seen:
+            seen.add(t)
+            cleaned.append(t)
+
+    if not cleaned:
+        cleaned = [_fallback_one_liner(lines, prompt_text, max_len)]
+    return cleaned
 
 def _looks_final(s: str) -> bool:
     if not s:

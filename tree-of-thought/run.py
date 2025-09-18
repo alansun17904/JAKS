@@ -41,7 +41,7 @@ def parse_args():
         argparse.Namespace : all the CLI args passed 
     """
     args = argparse.ArgumentParser()
-    args.add_argument('--backend', type=str, default='gpt2',  choices=['gpt2', 'meta-llama/llama-3.2-3B-Instruct', 'pythia-6.9b-deduped','pythia-1.4b-deduped'])
+    args.add_argument('--backend', type=str, default='gpt2',  choices=['gpt2', 'meta-llama/llama-3.2-3B-Instruct','meta-llama/Llama-3.1-8B-Instruct', 'pythia-6.9b-deduped','pythia-1.4b-deduped', 'meta-llama/Meta-Llama-3.1-8B-Instruct'])
     args.add_argument('--temperature', type=float, default=0.7)
 
     args.add_argument('--task', type=str, required=True, choices=['game24', 'text', 'crosswords', 'gsm8k'])

@@ -40,7 +40,7 @@ def gpt(prompt,
     
     for _i in range(max(1, n)):
         raw = tlens.generate(prompt, temperature=temperature, max_tokens=max_tokens)
-
+        
         if proposals:
             lines = []
             text = raw.strip()
