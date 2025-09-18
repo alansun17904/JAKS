@@ -11,9 +11,44 @@ from pathlib import Path
 import subprocess
 import re
 
-_TOKEN_RE = re.compile(r"<\|[^>]+?\|>") 
+# Strip chat special tokens like <|eot_id|>
+_TOKEN_RE = re.compile(r"<\|[^>]+?\|>")
+
+# One-line schema for propose steps
+_SC_ASSIGN = re.compile(r'^ASSIGN:\s*[A-Za-z_]\w*\s*=\s*[-+*/().\dA-Za-z_\s]+$')
+_SC_EQ     = re.compile(r'^EQ:\s*[-+*/().\dA-Za-z_\s]+\s*=\s*[-+*/().\dA-Za-z_\s]+$')
+
+# Extract the LHS variable name in ASSIGN lines
+_LHS_RE = re.compile(r'^\s*ASSIGN:\s*([a-zA-Z_]\w*)\s*=', re.IGNORECASE)
+
 json_thought = {}
 all_entries = []
+_BAD_VARS = {"tmp", "temp", "step", "var", "test"}
+_EQ_IDENTITY_NUM = re.compile(r'^EQ:\s*([+\-]?\d+(?:\.\d+)?)\s*=\s*\1\s*$', re.IGNORECASE)
+
+
+def _is_identity_eq(line: str) -> bool:
+    if not line:
+        return False
+    s = line.strip()
+    if _EQ_IDENTITY_NUM.match(s):
+        return True
+    if not s.lower().startswith("eq:"):
+        return False
+    try:
+        body = s[3:].strip()
+        if "=" not in body:
+            return False
+        lhs, rhs = body.split("=", 1)
+        lhs = lhs.strip().replace(" ", "")
+        rhs = rhs.strip().replace(" ", "")
+        return lhs != "" and lhs == rhs
+    except Exception:
+        return False
+
+def _mentions_bad_var(s: str) -> bool:
+    words = re.findall(r'[A-Za-z_]\w*', s)
+    return any(w.lower() in _BAD_VARS for w in words)
 
 def _fallback_one_liner(lines, prompt_text, max_len=120):
     """
@@ -32,10 +67,11 @@ def _fallback_one_liner(lines, prompt_text, max_len=120):
         # drop 'next step:' prefix if present
         if s.lower().startswith("next step:"):
             s = s.split(":", 1)[1].strip()
-        # keep it short and single-line
-        s = s.replace("\n", " ").strip()
+        # keep only first physical line
+        s = s.splitlines()[0].strip()
         if not s:
             continue
+        # keep it short
         if len(s) > max_len:
             s = s[:max_len].rstrip()
         # trim to ~16 words to avoid rambles
@@ -47,36 +83,88 @@ def _fallback_one_liner(lines, prompt_text, max_len=120):
         if s.lower().startswith(bad_starts):
             continue
         return s
-    # Absolute last resort: generic but harmless step
-    return "compute the next intermediate step."
+    # Absolute last resort: schema-conformant harmless step (avoid using a "step" var)
+    return "EQ: 1=1"
 
+
+def _keep_one_schema_line(s: str, fallback: str, max_len: int = 60) -> str:
+    """
+    Enforce we only keep a single, short line matching the ASSIGN/EQ schema.
+    Also reject ASSIGNments to a variable literally named 'step'.
+    """
+    if not s:
+        return fallback
+    # strip special tokens and clamp to first line
+    line = _TOKEN_RE.sub("", s).strip().splitlines()[0].strip()
+    # drop trivial prompt echoes
+    if not line or line.lower().startswith(("problem:", "steps so far:", "next step:", "given the problem", "do not")):
+        return fallback
+    # hard length cap
+    if len(line) > max_len:
+        line = line[:max_len].rstrip()
+    # schema check
+    if _SC_ASSIGN.match(line):
+        m = _LHS_RE.match(line)
+        if m and m.group(1).lower() == "step":
+            return fallback
+        return line
+    if _SC_EQ.match(line):
+        return line
+    return fallback
 
 
 def _sanitize_proposals(lines, prompt_text, prior_text=None, max_len=120):
+    """
+    Clean & dedupe:
+    - keep only first physical line
+    - enforce ASSIGN:/EQ: schema
+    - drop prompt echoes, identities, repeats, and junk vars (tmp/step/var/test)
+    - NO FALLBACK LINE (returns [] if nothing good)
+    """
     prompt_lines = set(l.strip() for l in prompt_text.splitlines() if l.strip())
     prior = (prior_text or "").lower()
     cleaned, seen = [], set()
-    for ln in lines:
+
+    for ln in (lines or []):
         s = (ln or "").strip()
         if not s:
             continue
-        sl = s.lower()
+
+        # strip chat tokens like <|eot_id|>
+        s = _TOKEN_RE.sub("", s).strip()
+
+        # exact prompt echo skip
         if s in prompt_lines:
             continue
+
+        # clamp to a single schema line
+        one = _keep_one_schema_line(s, "", max_len=min(60, max_len))
+        if not one:
+            continue
+
+        # drop identity equations and junk vars
+        if _is_identity_eq(one):
+            continue
+        if _mentions_bad_var(one):
+            continue
+
+        # drop ASSIGN: step=...
+        m = _LHS_RE.match(one)
+        if m and m.group(1).lower() == "step":
+            continue
+
+        sl = one.lower()
         if sl in seen:
             continue
-        if sl and sl in prior:   # NEW: don’t repeat a step we already wrote
+        if sl in prior:
             continue
-        bad_starts = ("problem:", "steps so far:", "next step:", "given the problem", "do not give")
-        if sl.startswith(bad_starts):
-            continue
-        if len(s) > max_len:
-            s = s[:max_len].rstrip()
+
         seen.add(sl)
-        cleaned.append(s)
-    if not cleaned:
-        cleaned = [_fallback_one_liner(lines, prompt_text, max_len)]
+        cleaned.append(one)
+
+    # IMPORTANT: return [] if nothing good, no synthetic fallback
     return cleaned
+
 
 def _looks_final(s: str) -> bool:
     if not s:
@@ -85,100 +173,75 @@ def _looks_final(s: str) -> bool:
     return ("####" in t) or ("final answer" in t) or ("final_answer:" in t)
 
 
-
 def get_value(task, x, y, n_evaluate_sample, cache_value=True):
     """
-    To ask the llm how well the current step is on the scale of (sure/maybe/impossible)
-    
-    Args:
-        task: The task object providing prompt and cache utilities.
-        x: The input string.
-        y: The candidate output string.
-        n_evaluate_sample: number of times to ask the llm
-        cache_value: Whether to cache the value result.
-    Returns:
-        float: The value score for the candidate output.
+    Ask the LLM to rate how promising the current step is
+    on the scale (impossible/likely/sure).
     """
-
-    # goes to /tot/tasks/{task}.py to get the respective tasks's wrap methods
-    value_prompt = task.value_prompt_wrap(x, y) # eg: Evaluate if given numbers can reach 24 (sure/likely/impossible)
-    # if cached value is available then use cached
+    value_prompt = task.value_prompt_wrap(x, y)
     if cache_value and value_prompt in task.value_cache:
         return task.value_cache[value_prompt]
-    # Send to gpt to run the inference loop
-    value_outputs = gpt(value_prompt,
-                        n=n_evaluate_sample,
-                        stop=None,
-                        json=thought_dict,
-                        x=x,
-                        proposals = False)
-    # goes to /tot/tasks/{task}.py to get the respective tasks's unwrap methods
+
+    value_outputs = gpt(
+        value_prompt,
+        n=n_evaluate_sample,
+        stop=None,
+        json=thought_dict,
+        x=x,
+        proposals=False
+    )
     value = task.value_outputs_unwrap(x, y, value_outputs)
     if cache_value:
         task.value_cache[value_prompt] = value
     return value
 
+
 def get_values(task, x, ys, n_evaluate_sample, cache_value=True):
     """
-    Actual function that calls the inference loop i.e get_values() for each variation 
-
-    Args:
-        task: The task object.
-        x: The input string.
-        ys: List of step ith variations.
-        n_evaluate_sample: number of times to ask the llm
-        cache_value: Whether to cache value results.
-    Returns:
-        list: Value scores for each candidate output.
+    Call get_value for each candidate, with a small local cache.
     """
     values = []
     local_value_cache = {}
-    for y in ys:  # each partial output
-        if y in local_value_cache:  # avoid duplicate candidates
+    for y in ys:
+        if y in local_value_cache:
             value = local_value_cache[y]
-        else:    
+        else:
             value = get_value(task, x, y, n_evaluate_sample, cache_value=cache_value)
             local_value_cache[y] = value
         values.append(value)
     return values
 
-def get_proposals(task, x, y, n_generate_sample, thought_dict): 
-    """
-    Ask LLM to propose a set of first steps based on few-shot prompting.
 
-    Args:
-        task: The task object.
-        x: The input string.
-        y: The current output string (partial solution).
-    Returns:
-        list: New candidate outputs (proposals) as continuations of y.
-    """
-    # In /tot/tasks/{task}.py gets the respective method 
+def get_proposals(task, x, y, n_generate_sample, thought_dict):
     propose_prompt = task.propose_prompt_wrap(x, y)
-
     thought_dict["Prompt"] = propose_prompt
-
     print(thought_dict)
 
-    # each line is a variation
-    raw_lists = gpt(propose_prompt,
-                    n= n_generate_sample, stop=None,
-                    json = thought_dict,
-                    x = x,
-                    proposals = True,
-                    task = type(task).__name__ )
+    raw_lists = gpt(
+        propose_prompt,
+        n=n_generate_sample,
+        stop=None,
+        json=thought_dict,
+        x=x,
+        proposals=True,
+        task=type(task).__name__
+    )
 
     flat = list(itertools.chain(*raw_lists))
     proposals = _sanitize_proposals(flat, propose_prompt, prior_text=y)
     print(f"To debug: thought variations: {proposals}")
 
+    # If everything was filtered out, DO NOT append junk — keep current y
+    if not proposals:
+        print("To debug: no clean proposals; carrying forward current partial solution unchanged.")
+        return [y]
+
     for step_line in proposals:
         thought_dict["thought_variation"][step_line] = []
 
     print(f"To debug: {thought_dict}")
-
-    # store each variation in list along with previous variation
     return [y + step_line + '\n' for step_line in proposals]
+
 
 def get_cot_completions(task, x, y, n_generate_sample, thought_dict):
     """
@@ -199,19 +262,13 @@ def get_cot_completions(task, x, y, n_generate_sample, thought_dict):
     )
     return [out if out.endswith("\n") else out + "\n" for out in outs]
 
-### adding a function for writing to json over here and calling it at the end of solve
+
+# ---- JSON logging helpers --------------------------------------------------
+
 def thought_to_json(dictionary, filename):
-    # p = Path("circuit-stability/code/src/cdatasets/data") / filename
-    # p.parent.mkdir(parents=True, exist_ok=True)
-    # with p.open("w") as f:
-    #     json.dump(dictionary, f, indent=4)
-    #     f.write("\n")
     sanitized_filename = re.sub(r'[<>:"/\\|?*,]', '_', filename)
-    
-    # Also limit filename length to avoid path too long errors
     if len(sanitized_filename) > 100:
         sanitized_filename = sanitized_filename[:100]
-    
     p = Path("circuit-stability/code/src/cdatasets/data") / sanitized_filename
     p.parent.mkdir(parents=True, exist_ok=True)
     with p.open("w") as f:
@@ -220,35 +277,20 @@ def thought_to_json(dictionary, filename):
 
 
 def get_circuit_scores(task, x, y):
-    """
-    This function is used to get the best scored thought based on its corresponding circuit metrics.
-    :param task:
-    :param x:
-    :param y:
-    :return:
-    """
-
     return None
+
+
+# ---- Main loop -------------------------------------------------------------
 
 def solve(args, task, idx, to_print=True):
     """
     Main BFS search loop for generating and selecting candidate solutions step by step.
     At each step, generates, evaluates, and selects candidates according to the specified methods.
-
-    Args:
-        args: all the CLI args.
-        task: The task object.
-        idx: Index of the input to solve.
-        to_print: Whether to print intermediate results.
-    Returns:
-        tuple: (final candidate outputs, log info dictionary)
     """
-    # the main model generation loop; goes to /tot/models.py
     global gpt
-    # make the json_thought object global
     global json_thought
     global thought_dict
-    # just adds these args without actually calling the function
+
     try:
         import random, torch
         random.seed(0); np.random.seed(0)
@@ -256,117 +298,76 @@ def solve(args, task, idx, to_print=True):
     except Exception:
         pass
 
-
     gpt = partial(gpt, model=args.backend, temperature=args.temperature)
     print(gpt)
-    x = task.get_input(idx)  # gets input at current index
-    ys = ['']  # current output candidates / thought variations
+    x = task.get_input(idx)
+    ys = ['']
     infos = []
 
+    json_thought = {"data_entry": str(x), "steps": []}
 
-    # Structure of JSON object
-    json_thought = {"data_entry" : str(x), "steps": []}
+    for step in range(task.steps):
+        thought_dict = {
+            "step": step,
+            "Prompt": None,
+            "raw_output_prop": [],
+            "raw_output_eval": [],
+            "thought_variation": {}
+        }
 
-    for step in range(task.steps): # each class instance has an attribute steps allowed to complete given task
-        thought_dict = {"step": step,
-                        "Prompt": None,
-                        "raw_output_prop": [],
-                        "raw_output_eval": [],
-                        "thought_variation": {}
-                        }
-
-        # Ask model to propose variations of first step /tot/prompts/{task}.py propose_prompt
+        # generation
         if args.method_generate == 'propose':
             new_ys_nested = [get_proposals(task, x, y, args.n_generate_sample, thought_dict) for y in ys]
         elif args.method_generate == 'cot':
             new_ys_nested = [get_cot_completions(task, x, y, args.n_generate_sample, thought_dict) for y in ys]
         else:
             new_ys_nested = [ys]
-        #print(f"To debug: new_ys: {new_ys}")
-
-        # the list of list for concurrent step's variation generation is a list of list
-
 
         print(f"To debug: {thought_dict}")
 
-        new_ys = list(itertools.chain(*new_ys_nested)) # this flattens it into a single list
-        #print(f"To debug: flattened new_ys: {new_ys}")
-
+        new_ys = list(itertools.chain(*new_ys_nested))
         ids = list(range(len(new_ys)))
         print(f"To debug: ids: {ids}")
 
-        # TODO: Add additional cli args for circuit discovery as well
-        # TODO: Make this into a function and call the circuit_discovery script with params
-        # TODO: If above is done we have to change path too.
-        # Edit params at circuit-stability/code/src/scripts/naive_run.sh
-        #TODO: Circuit selection goes inside the first if
-
-        # Append each thought's data to the json
+        # log to JSON as we go
         json_thought["steps"].append(thought_dict)
-
         name = json_thought["data_entry"].replace(" ", ",")
-        thought_to_json(json_thought, f'{name}.json')
+        thought_to_json(json_thought, f"{name}.json")
 
-
-        # evaluation method
+        # selection scores
         if args.method_select == 'first':
-            # Skip scoring completely
-            values = [0.0] * len(new_ys)
+            values = [0.0] * len(new_ys)  # no judging, always take first
         else:
-    # value-based scoring only (circuits removed for now)
             values = get_values(task, x, new_ys, args.n_evaluate_sample)
-        # elif args.method_evaluate == 'circuits':
 
-        #     subprocess.run(["bash",
-        #                     "circuit-stability/code/src/scripts/naive_run.sh"],
-        #                    check=True)
-        #     values = get_circuit_scores(task, x, new_ys)
-        # elif args.method_evaluate == 'value':
-        #     values = get_values(task, x, new_ys, args.n_evaluate_sample)
-
-        ### TODO: ASSIGNING RANDOM VALUES SO THAT WE HAVE THE PIPELINE RUNNING
-        ### TODO: HAVE TO REMOVE IN FINAL
-        # print(f"To debug:Values {values}")
-        # rng = np.random.default_rng(42)  # optional seed
-        # n, lo, hi = len(values), 0.001, 20
-        # values = list(rng.uniform(lo, hi, size=n))
-        # print(f"To debug:Values {values}")
-
-
-        #Append score for each variation
+        # attach scores to thought variations
         for elist, eval in zip(thought_dict["thought_variation"].values(), values):
             elist.append(eval)
 
-        # selection
+        # choose next beams
         if args.method_select == 'first':
             select_ids = [0]
         elif args.method_select == 'sample':
-
             ps = np.array(values) / sum(values)
             select_ids = np.random.choice(ids, size=args.n_select_sample, p=ps).tolist()
-
         elif args.method_select == 'greedy':
-            # sorted based on values
-            select_ids = sorted(ids, key=lambda x: values[x], reverse=True)[:args.n_select_sample]
+            select_ids = sorted(ids, key=lambda z: values[z], reverse=True)[:args.n_select_sample]
+        else:
+            select_ids = [0]
+
         select_new_ys = [new_ys[select_id] for select_id in select_ids]
         print(f"To Debug: New selected{select_new_ys}")
 
-        # log
-        if to_print: 
+        if to_print:
             sorted_new_ys, sorted_values = zip(*sorted(zip(new_ys, values), key=lambda x: x[1], reverse=True))
             print(f'-- new_ys --: {sorted_new_ys}\n-- sol values --: {sorted_values}\n-- choices --: {select_new_ys}\n')
-        
+
         infos.append({'step': step, 'x': x, 'ys': ys, 'new_ys': new_ys, 'values': values, 'select_new_ys': select_new_ys})
         ys = select_new_ys
 
         if any(_looks_final(y) for y in ys):
             break
 
-    #name = json_thought["data_entry"].replace(" ", ",")
-    #thought_to_json(json_thought, f'{name}.json')
-    
-    if to_print: 
+    if to_print:
         print(ys)
     return ys, {'steps': infos}
-
-

@@ -56,9 +56,15 @@ Steps:
 '''
 
 # 1-shot propose (the ToT engine passes "Problem.../Steps so far..." in {input})
-propose_prompt = '''Given the problem and the steps so far, write ONLY the next step as ONE short line (< 20 words).
-Do NOT repeat the prompt. Do NOT restate the problem. Do NOT add labels or extra text.
-Output exactly one line with the next step (no bullets).
+propose_prompt = '''Given the problem and the steps so far, output ONLY ONE line in ONE of these forms:
+- ASSIGN: <symbol>=<number>      (e.g., ASSIGN: may=24)
+- EQ: <simple equation>           (e.g., EQ: 28/2=14 or EQ: 12+24=36)
+
+Rules:
+- Exactly one line.
+- No extra words, labels, bullets, or restating the problem.
+- Do NOT give the final answer unless asked.
+
 {input}
 Next step:'''
 

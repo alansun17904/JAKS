@@ -1,0 +1,90 @@
+{
+    "data_entry": "Weng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?",
+    "steps": [
+        {
+            "step": 0,
+            "Prompt": "Given the problem and the steps so far, output ONLY ONE line in ONE of these forms:\n- ASSIGN: <symbol>=<number>      (e.g., ASSIGN: may=24)\n- EQ: <simple equation>           (e.g., EQ: 28/2=14 or EQ: 12+24=36)\n\nRules:\n- Exactly one line.\n- No extra words, labels, bullets, or restating the problem.\n- Do NOT give the final answer unless asked.\n\nProblem:\nWeng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?\n\nSteps so far:\n\nNext step:",
+            "raw_output_prop": [
+                "ASSIGN: hours=50/60",
+                "ASSIGN: minutes=50"
+            ],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "ASSIGN: hours=50/60": [
+                    0.0
+                ],
+                "ASSIGN: minutes=50": [
+                    0.0
+                ]
+            }
+        },
+        {
+            "step": 1,
+            "Prompt": "Given the problem and the steps so far, output ONLY ONE line in ONE of these forms:\n- ASSIGN: <symbol>=<number>      (e.g., ASSIGN: may=24)\n- EQ: <simple equation>           (e.g., EQ: 28/2=14 or EQ: 12+24=36)\n\nRules:\n- Exactly one line.\n- No extra words, labels, bullets, or restating the problem.\n- Do NOT give the final answer unless asked.\n\nProblem:\nWeng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?\n\nSteps so far:\nASSIGN: hours=50/60\n\nNext step:",
+            "raw_output_prop": [
+                "ASSIGN: rate_per_minute=12/60",
+                "ASSIGN: pay=12*hours"
+            ],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "ASSIGN: rate_per_minute=12/60": [
+                    0.0
+                ],
+                "ASSIGN: pay=12*hours": [
+                    0.0
+                ]
+            }
+        },
+        {
+            "step": 2,
+            "Prompt": "Given the problem and the steps so far, output ONLY ONE line in ONE of these forms:\n- ASSIGN: <symbol>=<number>      (e.g., ASSIGN: may=24)\n- EQ: <simple equation>           (e.g., EQ: 28/2=14 or EQ: 12+24=36)\n\nRules:\n- Exactly one line.\n- No extra words, labels, bullets, or restating the problem.\n- Do NOT give the final answer unless asked.\n\nProblem:\nWeng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?\n\nSteps so far:\nASSIGN: hours=50/60\nASSIGN: rate_per_minute=12/60\n\nNext step:",
+            "raw_output_prop": [
+                "EQ: (12/60)*50=6",
+                "EQ: rate_per_minute * hours = 12/60 * 50/60"
+            ],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "EQ: (12/60)*50=6": [
+                    0.0
+                ],
+                "EQ: rate_per_minute * hours = 12/60 * 50/60": [
+                    0.0
+                ]
+            }
+        },
+        {
+            "step": 3,
+            "Prompt": "Given the problem and the steps so far, output ONLY ONE line in ONE of these forms:\n- ASSIGN: <symbol>=<number>      (e.g., ASSIGN: may=24)\n- EQ: <simple equation>           (e.g., EQ: 28/2=14 or EQ: 12+24=36)\n\nRules:\n- Exactly one line.\n- No extra words, labels, bullets, or restating the problem.\n- Do NOT give the final answer unless asked.\n\nProblem:\nWeng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?\n\nSteps so far:\nASSIGN: hours=50/60\nASSIGN: rate_per_minute=12/60\nEQ: (12/60)*50=6\n\nNext step:",
+            "raw_output_prop": [
+                "ASSIGN: earnings=6",
+                "ASSIGN: earnings=6"
+            ],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "ASSIGN: earnings=6": [
+                    0.0
+                ]
+            }
+        },
+        {
+            "step": 4,
+            "Prompt": "Finish the solution briefly and end with exactly: Final answer: <number>\nDo NOT restate the problem. Keep to 1\u20133 short lines before the final answer.\nProblem:\nWeng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?\nSteps so far:\nASSIGN: hours=50/60\nASSIGN: rate_per_minute=12/60\nEQ: (12/60)*50=6\nASSIGN: earnings=6\n",
+            "raw_output_prop": [
+                "Since the rate is $12 per hour and there are 60 minutes in an hour, the rate per minute is 12/60 dollars. To find the total earnings, we can multiply the rate per minute by the number of minutes worked. \n\nFirst, calculate the rate per minute: rate_per_minute = 12 / 60 = 0.2 dollars per minute. Then, multiply the rate per minute by the number of minutes worked: earnings = rate_per_minute * 50 = ",
+                "Since Weng earns $12 per hour and she worked for 50 minutes, we need to convert the time to hours and calculate her earnings. We've already assigned the value of 50 minutes as hours and the rate per minute.\n\nWe can multiply the rate per minute by the total hours to find her earnings. However, we should multiply the rate per hour by the total hours instead, since rate_per_minute is 12/60 which is not correct. \n\nASSIGN: rate_per_hour ="
+            ],
+            "raw_output_eval": [],
+            "thought_variation": {}
+        },
+        {
+            "step": 5,
+            "Prompt": "Finish the solution briefly and end with exactly: Final answer: <number>\nDo NOT restate the problem. Keep to 1\u20133 short lines before the final answer.\nProblem:\nWeng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?\nSteps so far:\nASSIGN: hours=50/60\nASSIGN: rate_per_minute=12/60\nEQ: (12/60)*50=6\nASSIGN: earnings=6\n",
+            "raw_output_prop": [
+                "To find Weng's earnings, we need to calculate her rate per hour correctly and then multiply it by the number of hours she worked.\n\nrate_per_hour = 12\nhours = 50/60 = 5/6\nrate_per_minute = 12/60 = 1/5 dollars per minute\nearnings = rate_per_hour * hours = 12 * (50/60) = 10 dollars\n\nFinal answer: 10",
+                "Since Weng only worked for 50 minutes, we need to multiply the rate per minute by the number of minutes worked. \n\nRATE: rate_per_minute = 12/60 = 0.2\n\nEARNINGS: earnings = rate_per_minute * 50 = 0.2 * 50 = 10\n\nFinal answer: 10"
+            ],
+            "raw_output_eval": [],
+            "thought_variation": {}
+        }
+    ]
+}

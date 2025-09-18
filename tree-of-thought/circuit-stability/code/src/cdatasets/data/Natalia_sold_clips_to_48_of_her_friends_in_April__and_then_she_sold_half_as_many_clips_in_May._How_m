@@ -1,0 +1,90 @@
+{
+    "data_entry": "Natalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May?",
+    "steps": [
+        {
+            "step": 0,
+            "Prompt": "Given the problem and the steps so far, output ONLY ONE line in ONE of these forms:\n- ASSIGN: <symbol>=<number>      (e.g., ASSIGN: may=24)\n- EQ: <simple equation>           (e.g., EQ: 28/2=14 or EQ: 12+24=36)\n\nRules:\n- Exactly one line.\n- No extra words, labels, bullets, or restating the problem.\n- Do NOT give the final answer unless asked.\n\nProblem:\nNatalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May?\n\nSteps so far:\n\nNext step:",
+            "raw_output_prop": [
+                "ASSIGN: april=48",
+                "ASSIGN: clips_sold_april=48"
+            ],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "ASSIGN: april=48": [
+                    0.0
+                ],
+                "ASSIGN: clips_sold_april=48": [
+                    0.0
+                ]
+            }
+        },
+        {
+            "step": 1,
+            "Prompt": "Given the problem and the steps so far, output ONLY ONE line in ONE of these forms:\n- ASSIGN: <symbol>=<number>      (e.g., ASSIGN: may=24)\n- EQ: <simple equation>           (e.g., EQ: 28/2=14 or EQ: 12+24=36)\n\nRules:\n- Exactly one line.\n- No extra words, labels, bullets, or restating the problem.\n- Do NOT give the final answer unless asked.\n\nProblem:\nNatalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May?\n\nSteps so far:\nASSIGN: april=48\n\nNext step:",
+            "raw_output_prop": [
+                "ASSIGN: may=april/2",
+                "ASSIGN: may=april/2"
+            ],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "ASSIGN: may=april/2": [
+                    0.0
+                ]
+            }
+        },
+        {
+            "step": 2,
+            "Prompt": "Given the problem and the steps so far, output ONLY ONE line in ONE of these forms:\n- ASSIGN: <symbol>=<number>      (e.g., ASSIGN: may=24)\n- EQ: <simple equation>           (e.g., EQ: 28/2=14 or EQ: 12+24=36)\n\nRules:\n- Exactly one line.\n- No extra words, labels, bullets, or restating the problem.\n- Do NOT give the final answer unless asked.\n\nProblem:\nNatalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May?\n\nSteps so far:\nASSIGN: april=48\nASSIGN: may=april/2\n\nNext step:",
+            "raw_output_prop": [
+                "EQ: may+april=48+(april/2)",
+                "EQ: may+april=april+(april/2)"
+            ],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "EQ: may+april=48+(april/2)": [
+                    0.0
+                ],
+                "EQ: may+april=april+(april/2)": [
+                    0.0
+                ]
+            }
+        },
+        {
+            "step": 3,
+            "Prompt": "Given the problem and the steps so far, output ONLY ONE line in ONE of these forms:\n- ASSIGN: <symbol>=<number>      (e.g., ASSIGN: may=24)\n- EQ: <simple equation>           (e.g., EQ: 28/2=14 or EQ: 12+24=36)\n\nRules:\n- Exactly one line.\n- No extra words, labels, bullets, or restating the problem.\n- Do NOT give the final answer unless asked.\n\nProblem:\nNatalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May?\n\nSteps so far:\nASSIGN: april=48\nASSIGN: may=april/2\nEQ: may+april=48+(april/2)\n\nNext step:",
+            "raw_output_prop": [
+                "ASSIGN: may+april=48+(april/2)",
+                "ASSIGN: total=48+(april/2)"
+            ],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "ASSIGN: total=48+(april/2)": [
+                    0.0
+                ]
+            }
+        },
+        {
+            "step": 4,
+            "Prompt": "Finish the solution briefly and end with exactly: Final answer: <number>\nDo NOT restate the problem. Keep to 1\u20133 short lines before the final answer.\nProblem:\nNatalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May?\nSteps so far:\nASSIGN: april=48\nASSIGN: may=april/2\nEQ: may+april=48+(april/2)\nASSIGN: total=48+(april/2)\n",
+            "raw_output_prop": [
+                "To find the total number of clips sold, substitute the value of april into the equation. \n\nAPRIL = 48\nMAY = APRIL / 2 = 48 / 2 = 24\nEQ: MAY + APRIL = 24 + 48 = 72\nASSIGN: TOTAL = 72\n\nFinal answer: 72",
+                "Now, substitute the value of april into the equation for total. total=48+(48/2). \nSimplify the equation: total=48+24. \nCalculate the result: total=72.\n\nFinal answer: 72"
+            ],
+            "raw_output_eval": [],
+            "thought_variation": {}
+        },
+        {
+            "step": 5,
+            "Prompt": "Finish the solution briefly and end with exactly: Final answer: <number>\nDo NOT restate the problem. Keep to 1\u20133 short lines before the final answer.\nProblem:\nNatalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May?\nSteps so far:\nASSIGN: april=48\nASSIGN: may=april/2\nEQ: may+april=48+(april/2)\nASSIGN: total=48+(april/2)\n",
+            "raw_output_prop": [
+                "Substitute the value of april into the equation for may: \nmay = 48 / 2 = 24\n\nNow substitute the values of april and may into the equation for total:\ntotal = 48 + (48 / 2)\ntotal = 48 + 24\ntotal = 72\n\nFinal answer: 72",
+                "Now, substitute the value of 'april' into the equation. \nEQ: total = 48 + (48/2)\nSimplify the equation.\nEQ: total = 48 + 24\nCalculate the total.\nFinal answer: 72"
+            ],
+            "raw_output_eval": [],
+            "thought_variation": {
+                "EQ: total = 48 + (48/2)": [],
+                "EQ: total = 48 + 24": []
+            }
+        }
+    ]
+}

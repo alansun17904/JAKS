@@ -16,7 +16,8 @@ _NUM_RE = re.compile(r"[+\-]?\d+(?:\.\d+)?")
 def _finish_prompt(input_text, steps_so_far):
     steps = (steps_so_far or "").strip()
     return (
-        'Continue the solution and conclude with "Final answer: <number>".\n'
+        'Finish the solution briefly and end with exactly: Final answer: <number>\n'
+        'Do NOT restate the problem. Keep to 1–3 short lines before the final answer.\n'
         f"Problem:\n{input_text}\n"
         "Steps so far:\n"
         f"{steps}\n"
@@ -78,7 +79,7 @@ class GSM8KTask(Task):
 
         self.data = data["train"]
         self.value_cache = {}
-        self.steps = 5           # maybe increase or decrease later
+        self.steps = 6           # maybe increase or decrease later
         self.stops = ["\n"] * 4
 
     def __len__(self):
